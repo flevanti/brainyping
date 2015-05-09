@@ -1,0 +1,28 @@
+# Use PHP54CGI as default
+AddHandler fcgid54-script .php
+
+
+Options -Indexes
+
+RewriteEngine on
+
+#Rewrite rule to redirect to HTTPS connection to HTTP
+RewriteCond %{HTTPS} on
+RewriteRule (.*) http://%{HTTP_HOST} [L]
+#RewriteRule (.*) http://%{HTTP_HOST}%{REQUEST_URI} [L]
+
+
+#REMOVE WWW IF PRESENT....
+RewriteCond %{HTTP_HOST} ^www\.brainyping\.com$ [NC]
+RewriteRule ^(.*)$ http://brainyping.com/$1 [R=301,L]
+
+#ADD WWW. IF NOT PRESENT.... COMMENTED!!.. NON USED...
+#RewriteCond %{HTTP_HOST} !^www\.
+#RewriteRule ^(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
+
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule .* index.php [QSA,L]
+
+

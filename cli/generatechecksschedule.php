@@ -20,9 +20,18 @@ $host_manager = new host_manager();
 $ret = $host_manager->createHostCheckScheduleALL();
 
 if ($ret === false) {
+    //CHECK IF THE ERROR IS TOO LONG TO BE SHOWN/SENT BY EMAIL
+    //ADD A POSSIBLE CAUSE TO THIS (IT USUALLY OCCURS IN DEV WHEN PROCESS IS RUN MANUALLY WHEN NEEDED
+    if (strlen($host_manager->last_error) > 2000) {
+        $host_manager->last_error = "ERROR GENERATED IS TOO LONG\n" .
+                                    " THIS IS PROBABLY CAUSED BY THE PROCESS RUN AFTER A LONG PERIOD OF PAUSE, " .
+                                    "TRY TO EMPTY THE TABLE BEFORE RUN THE PROCESS AGAIN\n\n\n" .
+                                    substr($host_manager->last_error,0,2000);
+    }
     echo "Found an error:<br>";
     echo $host_manager->last_error;
     email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_,_APP_DEFAULT_EMAIL_CONTACTS_RECIPIENT_,"GENCHECKS ERROR",$host_manager->last_error);
+    die(); //if we found an error die here!
 }
 
 

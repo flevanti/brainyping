@@ -410,8 +410,7 @@ class host_manager {
             return false; //if id host parameter is not numeric return false (something's wrong)
         }
 
-        $sql = "update hosts set visits_counter = visits_counter + 1, visits_last_ts = " . time() . "
-                        where id = $id_host limit 1;";
+        $sql = "insert into hosts_visits_counter (id_host,ts) values ($id_host, unix_timestamp());";
         $this->dbhandler->query($sql);
 
         return true;

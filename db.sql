@@ -68,7 +68,7 @@ CREATE TABLE `bg_proc_logs` (
   KEY `idx_chart_value_gen` (`chart_value_generated`),
   KEY `db_id` (`db_id`),
   KEY `idx_ts_stop` (`ts_stop`)
-) ENGINE=MyISAM AUTO_INCREMENT=216014 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=216909 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -193,7 +193,7 @@ CREATE TABLE `host_logs` (
   KEY `fk_id_host_hosts` (`public_token`),
   KEY `idx_db_id` (`db_id`),
   KEY `fk_id_host_hostlogs_idx` (`id_host`)
-) ENGINE=InnoDB AUTO_INCREMENT=38239 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=38262 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -268,8 +268,6 @@ CREATE TABLE `hosts` (
   `check_reservation_ts` int(11) NOT NULL DEFAULT '0',
   `keyword` varchar(200) CHARACTER SET utf8 NOT NULL DEFAULT '',
   `edited_ts` int(11) NOT NULL DEFAULT '0',
-  `visits_counter` int(11) NOT NULL DEFAULT '0',
-  `visits_last_ts` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_public_token` (`public_token`),
   KEY `idx_enabled` (`enabled`),
@@ -287,6 +285,20 @@ CREATE TABLE `hosts` (
   CONSTRAINT `fk_checktype` FOREIGN KEY (`check_type`) REFERENCES `check_types` (`id`),
   CONSTRAINT `fk_id_user` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1810 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `hosts_visits_counter`
+--
+
+DROP TABLE IF EXISTS `hosts_visits_counter`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `hosts_visits_counter` (
+  `id_host` int(11) DEFAULT NULL,
+  `ts` int(11) DEFAULT NULL,
+  KEY `idx_id_host` (`id_host`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -360,7 +372,7 @@ CREATE TABLE `results` (
   KEY `idx_current_date_ts` (`current_date_ts`),
   KEY `idx_current_date_ts_00` (`current_date_ts_00`),
   KEY `idx_current_date_ts_000` (`current_date_ts_000`)
-) ENGINE=InnoDB AUTO_INCREMENT=39157758 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39166268 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -409,7 +421,7 @@ CREATE TABLE `results_latest_24h` (
   PRIMARY KEY (`id`),
   KEY `idx_id_host` (`id_host`),
   KEY `idx_ts_trunc` (`ts_trunc`)
-) ENGINE=InnoDB AUTO_INCREMENT=13637538 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13641632 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -460,7 +472,7 @@ CREATE TABLE `results_temp` (
   KEY `idx_current_date_ts` (`current_date_ts`),
   KEY `idx_current_date_ts_00` (`current_date_ts_00`),
   KEY `idx_current_date_ts_000` (`current_date_ts_000`)
-) ENGINE=InnoDB AUTO_INCREMENT=39157722 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39166215 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -558,7 +570,7 @@ CREATE TABLE `sync_tables_logs` (
   `machine_id` varchar(45) CHARACTER SET utf8 DEFAULT NULL,
   `db_id` varchar(45) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=688523 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=688737 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -737,4 +749,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-05-16 11:51:30
+-- Dump completed on 2015-05-16 12:32:37

@@ -400,6 +400,22 @@ class host_manager {
     } //END METHOD getUserHostsList
 
 
+    /**
+     * Add visit to host visits counter
+     * @param $id_host
+     * @return bool
+     */
+    function addVisit ($id_host) {
+        if (!is_numeric($id_host)) {
+            return false; //if id host parameter is not numeric return false (something's wrong)
+        }
+
+        $sql = "insert into hosts_visits_counter (id_host,ts) values ($id_host, unix_timestamp());";
+        $this->dbhandler->query($sql);
+
+        return true;
+    }
+
     //RECEIVE AN OBJECT WITH 2 ELEMENTS, flag (str) and public_tokens (array)
     function bulkAction (&$data) {
 

@@ -43,6 +43,8 @@ if ($user_is_owner == false and $host_is_public == false) {
     return;
 }
 
+//Add visit to host visits counter
+$host_manager->addVisit($host["id"]);
 
 //HERE WE ARE ... LET'S GO...
 

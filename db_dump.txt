@@ -1,0 +1,1 @@
+mysqldump -d -u brainyping -p -h engine1.brainyping.com -P 443 --routines --compress --single-transaction  --skip-add-locks --skip-lock-tables --default-character-set=utf8 --compress -r db.sql brainyping

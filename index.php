@@ -217,6 +217,9 @@ header('Content-Type: text/html; charset=utf-8');
             case "infoaboutphp":
                 $file_to_include[] = "infoaboutphp.inc.php";
                 break;
+            case "infovisits":
+                $file_to_include[] = "infovisits.inc.php";
+                break;
             case "info":
                 $file_to_include[] = "info.inc.php";
                 $file_to_include[] =  "host_subscription_modal.inc.php";

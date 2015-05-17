@@ -33,7 +33,7 @@ if ($rs === false || count($rs)==0) {
 echo "<h4>MOST VISITED</h4>";
 foreach ($rs as $k=>$row) {
     echo ($row["id_user"]==user::getID()?"<i class='fa fa-user'></i> ":""); //Add an Icon if user is owner
-    echo "<b>" . $k . "</b>. " . $row["title"] . " (" . $row["host"] . ") " . $row["check_type"] . " (" . $row["nreq"]. ")<br>";
+    echo "<b>" . ($k+1) . "</b>. " . $row["title"] . " (" . $row["host"] . ") " . $row["check_type"] . " (" . $row["nreq"]. ")<br>";
     echo "Last check: " . ts_to_date($row["last_check_ts"]) . "<br>";
     echo "Last visit: " . ts_to_date($row["last_visit_ts"]) . "<br><br>";
 }

@@ -51,97 +51,11 @@ $uriobj = new URI_manager();
 //Parse URI
 $uriobj->parseURI();
 
-
-
+$page_renderer = new page_renderer(); //Create page renderer option
+$page_renderer->pageTitle =  _HTML_TITLE_; //default page title
+$page_renderer->scriptsFromLocal = _EXT_SCRIPTS_FROM_LOCAL_; //load scripts from application or remote CDN source
 //SEND HEADER WITH CHARSET - USED ALSO BY PHP
-
-
-header('Content-Type: text/html; charset=utf-8');
-
-
-?>
-
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-
-    <!--FAVICON-->
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <!--<link rel="icon" href="favicon.ico">-->
-
-    <title><?php echo _HTML_TITLE_; ?></title>
-
-      <?php
-      if (_EXT_SCRIPTS_FROM_LOCAL_ === true) { //DEV
-          ?>
-          <script src="/js/jquery-1.11.1.min.js"></script> <!--JQUERY 1.11.1-->
-          <link href="/css/normalize.css" rel="stylesheet"> <!--NORMALIZE CSS-->
-          <link href="/css/font-awesome.min.css" rel="stylesheet"> <!--FONT AWESOME-->
-          <link href="/css/bootstrap.min.css" rel="stylesheet"> <!--BOOTSTRAP 3.2.0-->
-          <script src="/js/bootstrap.min.js"></script>
-
-      <?php
-      } else { //PRD
-          ?>
-          <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script><!--JQUERY 1.11.1-->
-          <link  href="https://normalize-css.googlecode.com/svn/trunk/normalize.css" rel="stylesheet"/> <!--NORMALIZE CSS-->
-          <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"> <!--FONT AWESOME-->
-          <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet"> <!--BOOTSTRAP 3.2.0-->
-          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-      <?php
-      }
-
-
-      ?>
-
-      <script src="/js/jquery-ui.min.js"></script>
-      <link href="/css/jquery-ui.min.css" rel="stylesheet">
-      <link href="/css/jquery-ui.structure.min.css" rel="stylesheet">
-      <link href="/css/jquery-ui.theme.min.css" rel="stylesheet">
-
-
-      <!--PEITY CHARTS-->
-      <script src="/js/jquery.peity.js"></script>
-
-        <!--tablesorter JQUERY plugin-->
-      <script src="/js/jquery.tablesorter.min.js"></script>
-      <!--sticky footer and navbar-->
-      <link href="/css/sticky-footer-navbar.css" rel="stylesheet" >
-      <!-- Custom styles for this template -->
-      <link href="/css/general.css" rel="stylesheet">
-      <!--JSCHART.ORG -->
-      <script src="/js/Chart.min.js"></script>
-      <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-      <!--[if lt IE 9]>
-      <script src="/js/html5shiv.min.js"></script>
-      <script src="/js/respond.min.js"></script>
-      <![endif]-->
-
-        <!--toastr CSS alert box-->
-      <link href="/css/toastr.min.css" rel="stylesheet">
-
-
-  </head>
-
-  <body>
-
-    <script>
-        var ajax_calls_home = '<?php echo _AJAX_CALLS_INDEX_; ?>';
-    </script>
-
-
-
-    <!-- Begin page content -->
-    <div class="container">
-
-        <?php
+$page_renderer->sendPageHeader();
 
         //DEFAULT DB CONNECTION TO ENGINE DISABLED
         $conn_engine_db = false;
@@ -268,6 +182,34 @@ header('Content-Type: text/html; charset=utf-8');
             $host_manager = new host_manager($mydbh_web);
         }
 
+
+        if ($uriobj->getParam(0) == "info") { //If requested page is host information
+            //Try to retrieve host information to create ad-hoc web page title
+            $host_temp_info = $host_manager->getHostByToken($uriobj->getParam(1));
+            if ($host_temp_info != false) {
+                $page_renderer->pageTitle = $host_temp_info["title"] . " Server Status";
+                $page_renderer->metaDescription = $host_temp_info["title"] .
+                                                        " Server Status. Last check performed on " .
+                                                        ts_to_date($host_temp_info["last_check_ts"]) .
+                                                        ", the server was " . ($host_temp_info["check_result"]=="OK"?"UP":"DOWN") . ".";
+            }
+
+        }
+
+
+        //Try to render the page calling methods to build it....
+        echo $page_renderer->htmlHtmlInit();
+        echo $page_renderer->htmlHead();
+        echo $page_renderer->htmlBodyInit();
+        echo $page_renderer->bodyContainer();
+
+        //JS variable for ajax calls
+        echo "
+              <script>
+                  var ajax_calls_home = '" .  _AJAX_CALLS_INDEX_ ."';
+              </script>
+        ";
+
         //INCLUDE REQUESTED FILES
         foreach ($file_to_include as $value) {
             if (file_exists( _INCLUDE_FILES_PATH_ . $value)) {
@@ -278,38 +220,9 @@ header('Content-Type: text/html; charset=utf-8');
             }
         } //END FOREACH
 
+echo $page_renderer->bodyContainerEnd();
 
-        ?>
+require_once    _INCLUDE_FILES_PATH_ . "footer.inc.php";
 
-    </div>
-
-
-
-
-
-
-    <div class="footer">
-      <div class="container">
-          <?php
-            require_once    _INCLUDE_FILES_PATH_ . "footer.inc.php";
-          ?>
-      </div>
-    </div>
-
-
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-
-    <?php
-
-    ?>
-
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="/js/ie10-viewport-bug-workaround.js"></script>
-    <!-- toastr alertbox-->
-    <script src="/js/toastr.min.js"></script>
-
-  </body>
-</html>
+echo $page_renderer->htmlBodyEnd();
+echo $page_renderer->htmlHtmlEnd();

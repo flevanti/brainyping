@@ -487,13 +487,31 @@ class host_manager {
             }
         }
 
-
-
         $this->updateUserHostNumber();
         return true;
 
+    }
 
+    function getHostByToken($token) {
 
+        if ($token==false) {
+            return false;
+        }
+
+        $sql = "select h.*, ct.descr as mon_descr, ct.long_descr as mon_long_descr, ct.fa_icon as mon_fa_icon
+          from hosts h, check_types ct
+            where h.check_type = ct.id
+              and h.public_token = :public_token;";
+        $stmt = $this->dbhandler->prepare($sql);
+        $stmt->execute(["public_token"=>$token]);
+
+        if ($stmt->rowCount() == 0) {
+            return false;
+        }
+
+        //LOOKS LIKE PUBLIC TOKEN EXISTS! THAT'S GOOD!
+        //FETCH IT and RETURN IT
+        return $stmt->fetch(PDO::FETCH_ASSOC);
 
     }
 

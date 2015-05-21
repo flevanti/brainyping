@@ -6,25 +6,12 @@ if ($uriobj->getParam(1) == false) {
 }
 
 //TOKEN PRESENT!!!
-
 //LET'S RETRIEVE HOST
-$sql = "select h.*, ct.descr as mon_descr, ct.long_descr as mon_long_descr, ct.fa_icon as mon_fa_icon
-          from hosts h, check_types ct
-            where h.check_type = ct.id
-              and h.public_token = :public_token;";
-$stmt = $mydbh_web->prepare($sql);
-$stmt->execute(["public_token"=>$uriobj->getParam(1)]);
-
-if ($stmt->rowCount() == 0) {
+$host = $host_manager->getHostByToken($uriobj->getParam(1));
+if ($host === false) {
     echo "<br><br>OOOPSS! We couldn't find what you're looking for...<br>Sorry.";
     return;
 }
-
-//LOOKS LIKE PUBLIC TOKEN EXISTS! THAT'S GOOD!
-
-//FETCH IT
-$host = $stmt->fetch(PDO::FETCH_ASSOC);
-
 //NOW WE HAVE TO CHECK IF IT'S PUBLICLY AVAILABLE AND/OR USER IS THE OWNER
 $user_is_owner = false;
 $host_is_public = false;

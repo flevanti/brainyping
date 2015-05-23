@@ -1,17 +1,14 @@
 <?php
-if (user::getRole() != "USER" and  user::getRole() != "ADMIN" ) {
+if (user::getRole() != "USER" and user::getRole() != "ADMIN") {
     echo "Looks like you're not authorized, sorry!";
+
     return;
 }
-
-
-if ($uriobj->getParam("REFRESH")=="Y") {
+if ($uriobj->getParam("REFRESH") == "Y") {
     $host_manager->updateUserHostNumber();
 }
-
 if ($host_manager->getUserHostsCount("ALL") > 0) { //SHOW A STATUS BAR WITH HOST MONITORED
     echo "<h4>";
-
     //CONTACTS COUNT
     echo <<<LINE
             <span class="label label-default usercontacts " >
@@ -19,7 +16,6 @@ if ($host_manager->getUserHostsCount("ALL") > 0) { //SHOW A STATUS BAR WITH HOST
             Contacts
             </span>
 LINE;
-
     //ADD HOST
     echo <<<LINE
             <span class="label label-default addnew " >
@@ -27,8 +23,6 @@ LINE;
             Add Host
             </span>
 LINE;
-
-
     //BULK ACTIONS DROPDOWN
     echo <<<LINE
           <div class="btn-group bulk_action">
@@ -48,8 +42,6 @@ LINE;
           </ul>
         </div>
 LINE;
-
-
     //TOTAL HOST LABEL
     echo <<<LINE
             <span class="label label-primary filter filter_active" filter="ALL" >
@@ -58,8 +50,6 @@ LINE;
             <span class="fa fa-filter filter_icon "></span>
             </span>
 LINE;
-
-
     //MONITORED HOSTS LABEL
     echo <<<LINE
             <span class="label label-primary filter" filter="MONITORED" >
@@ -68,7 +58,6 @@ LINE;
             <span class="fa fa-filter filter_icon "></span>
             </span>
 LINE;
-
     //PAUSED HOSTS LABEL
     echo <<<LINE
             <span class="label label-info filter" filter="PAUSED" >
@@ -78,8 +67,6 @@ LINE;
             </span>
 
 LINE;
-
-
     //HOST MONITORED WITH OK STATUS LABEL
     echo <<<LINE
             <span class="label label-success filter" filter="OK" >
@@ -88,7 +75,6 @@ LINE;
             <span class="fa fa-filter filter_icon "></span>
             </span>
 LINE;
-
     //HOST MONITORED WITH NOK STATUS LABEL
     if ($host_manager->getUserHostsCount("PERCNOK") > 0) {
         $class_nok = "label-danger";
@@ -102,8 +88,6 @@ LINE;
             <span  class="fa fa-filter filter_icon "></span>
             </span>
 LINE;
-
-
     //SHARED HOSTS LABEL
     echo <<<LINE
             <span class="label label-info filter" filter="SHARED" >
@@ -112,8 +96,6 @@ LINE;
             <span  class="fa fa-filter filter_icon "></span>
             </span>
 LINE;
-
-
     //NOT SHARED HOSTS LABEL
     echo <<<LINE
     <span class="label label-info filter" filter="NOTSHARED" >
@@ -122,8 +104,6 @@ LINE;
             <span  class="fa fa-filter filter_icon "></span>
             </span>
 LINE;
-
-
     //HOSTS IN DELETE QUEUE LABEL
     if ($host_manager->getUserHostsCount("DELETED")) {
         echo <<<LINE
@@ -134,21 +114,13 @@ LINE;
             </span>
 LINE;
     } //END IF
-
-
     //REFRESH LABEL
     echo <<<LINE
             <span class="label label-default refresh" >
                 <span class="fa fa-refresh "></span>
             </span>
 LINE;
-
-
-
-
     echo "<input type=\"\" id=\"monitored_searchbox\"  placeholder='Search'> ";
-
-
     echo "</h4>";
 } else {  //NO HOSTS FOUND....
     echo "";

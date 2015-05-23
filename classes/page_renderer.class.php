@@ -1,6 +1,5 @@
 <?php
 
-
 class page_renderer {
     public $pageTitle = "";
     public $scriptsFromLocal = true;
@@ -20,7 +19,6 @@ class page_renderer {
     }
 
     function htmlHead() {
-
         $content = "
                 <head>
                     " . $this->favicon() . "
@@ -34,13 +32,11 @@ class page_renderer {
     }
 
     private function includeScripts() {
-
         if ($this->scriptsFromLocal == true) {
             $content = $this->includeScriptFromLocal();
         } else {
             $content = $this->includeScriptFromRemote();
         }
-
         $content .= "
                         <script src='/js/jquery-ui.min.js'></script>
                 <link href='/css/jquery-ui.min.css' rel='stylesheet'>
@@ -68,9 +64,7 @@ class page_renderer {
                 <!-- toastr alertbox-->
                 <script src='/js/toastr.min.js'></script>
         "; //End of content variable
-
         return $content;
-
     }
 
     private function includeScriptFromLocal() {
@@ -93,7 +87,6 @@ class page_renderer {
 
         ";
     }
-
 
     private function htmlMeta() {
         return "
@@ -137,6 +130,4 @@ class page_renderer {
     function htmlBodyEnd() {
         return "</body>";
     }
-
-
 } //End of Class

@@ -1,97 +1,89 @@
 <?php
 
-
 class IP_geolocation {
-        private $errStr = "";
-        private $context = "";
-        private $request_result = "";
-        private $ip = "";
-        private $countryCode, $countryName, $regionCode, $regionName, $city, $zipcode, $latitude, $longitude;
-        private $url_to_call = "http://freegeoip.net/json/";
+    private $errStr = "";
+    private $context = "";
+    private $request_result = "";
+    private $ip = "";
+    private $countryCode, $countryName, $regionCode, $regionName, $city, $zipcode, $latitude, $longitude;
+    private $url_to_call = "http://freegeoip.net/json/";
 
+    public function __construct($ip, $timeout = 3) {
+        if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+            $this->errStr = "Invalid IP address";
 
-        public function __construct($ip,$timeout=3) {
-            if (!filter_var($ip, FILTER_VALIDATE_IP)) {
-                $this->errStr = "Invalid IP address";
-                return false;
-            }
-            $this->IP = $ip;
-           $this->request_result =  $this->go($ip,$timeout);
+            return false;
         }
+        $this->IP = $ip;
+        $this->request_result = $this->go($ip, $timeout);
+    }
 
-
-
-        private function go ($ip,$timeout) {
-            $context = stream_context_create(array(
-                                                'http' => array(
-                                                    'method' => 'GET',
-                                                    'timeout' => $timeout,
-                                                )
-                                            ));
-            if (!($source = file_get_contents($this->url_to_call . $ip, 0, $context))) {
-                return false;
-            };
-            //CONVERT JSON TO ARRAY
-            $source = json_decode($source, true);
-            if (is_null($source)) {
-                //CONVERSION FAILED
-                return false;
-            }
-
-            //EXTRACT INFORMATION AND PUT THEM IN VARIABLES...
-            $this->countryCode = $source["country_code"];
-            $this->countryName = $source["country_name"];
-            $this->regionCode = $source["region_code"];
-            $this->regionName = $source["region_name"];
-            $this->city = $source["city"];
-            $this->zipcode = $source["zipcode"];
-            $this->latitude = $source["latitude"];
-            $this->longitude = $source["longitude"];
-
-
-
-            return true;
-        } //END GO METHOD
-
-        public function getRequestResult() {
-            return $this->request_result;
-         }
-
-        public function getIP() {
-            $this->ip;
+    private function go($ip, $timeout) {
+        $context = stream_context_create(array(
+                                             'http' => array(
+                                                 'method'  => 'GET',
+                                                 'timeout' => $timeout,
+                                             )
+                                         ));
+        if (!($source = file_get_contents($this->url_to_call . $ip, 0, $context))) {
+            return false;
+        };
+        //CONVERT JSON TO ARRAY
+        $source = json_decode($source, true);
+        if (is_null($source)) {
+            //CONVERSION FAILED
+            return false;
         }
-        public function getCountryCode () {
-            return $this->countryCode;
-        }
+        //EXTRACT INFORMATION AND PUT THEM IN VARIABLES...
+        $this->countryCode = $source["country_code"];
+        $this->countryName = $source["country_name"];
+        $this->regionCode = $source["region_code"];
+        $this->regionName = $source["region_name"];
+        $this->city = $source["city"];
+        $this->zipcode = $source["zipcode"];
+        $this->latitude = $source["latitude"];
+        $this->longitude = $source["longitude"];
 
-        public function getCountryName () {
-            return $this->countryName;
-        }
+        return true;
+    } //END GO METHOD
 
-        public function getRegionCode () {
-            return $this->regionCode;
-        }
+    public function getRequestResult() {
+        return $this->request_result;
+    }
 
-        public function getRegionName () {
-            return $this->regionName;
-        }
+    public function getIP() {
+        $this->ip;
+    }
 
-        public function getCity () {
-            return $this->city;
-        }
+    public function getCountryCode() {
+        return $this->countryCode;
+    }
 
-        public function getZipcode () {
-            return $this->zipcode;
-        }
+    public function getCountryName() {
+        return $this->countryName;
+    }
 
-        public function getLatitude () {
-            return $this->latitude;
-        }
+    public function getRegionCode() {
+        return $this->regionCode;
+    }
 
-        public function getLongitude () {
-            return $this->longitude;
-        }
+    public function getRegionName() {
+        return $this->regionName;
+    }
 
+    public function getCity() {
+        return $this->city;
+    }
 
+    public function getZipcode() {
+        return $this->zipcode;
+    }
 
+    public function getLatitude() {
+        return $this->latitude;
+    }
+
+    public function getLongitude() {
+        return $this->longitude;
+    }
 }  //END OF IP GEOLOCATION CLASS

@@ -3,13 +3,10 @@
 if (!isset($_GET["term"])) {
     exit;
 }
-
 $term = strtolower(trim($_GET["term"]));
-
 if (strlen($term) < 4) {
     exit;
 }
-
 if ($term == "http"
     or $term == "http:"
     or $term == "http:/"
@@ -30,15 +27,13 @@ if ($term == "http"
 ) {
     exit;
 }
-
 if (user::isLogged() === true) {
     $id_user = user::getID();
-    $limit= 15;
+    $limit = 15;
 } else {
     $id_user = 0;
-    $limit=8;
+    $limit = 8;
 }
-
 $sql = "select host as label, host as value, public_token
             from hosts
               where (host like :term
@@ -48,15 +43,11 @@ $sql = "select host as label, host as value, public_token
                             or (id_user = $id_user)
                       )
                         order by host limit $limit;";
-
-
 $stmt = $mydbh_web->prepare($sql);
-$stmt->bindValue("term",'%' . $term . '%');
+$stmt->bindValue("term", '%' . $term . '%');
 $ret = $stmt->execute();
 if ($stmt->rowCount() == 0) {
     exit;
 }
-
 $rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 echo json_encode($rs);

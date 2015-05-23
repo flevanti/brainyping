@@ -13,6 +13,7 @@ $ret = $sync->setSyncRunning($process_name);
 if ($ret === false) {
     echo "Unable to proceed!\n";
     echo $sync->last_error . "\n";
+
     return;
 }
 
@@ -35,9 +36,9 @@ $sync->setSyncNotRunning($process_name);
 $sql = "update bg_proc_last_exec set    date_ts = " . time() . ",
                                             date_str = '" . ts_to_date() . "',
                                             date_ts_db = unix_timestamp(),
-                                            execution_time = " . round((microtime(true)-$ts_boot),3) .",
+                                            execution_time = " . round((microtime(true) - $ts_boot), 3) . ",
                                             alert_sent = 0,
-                                            machine_id = '"._MACHINE_ID_."',
+                                            machine_id = '" . _MACHINE_ID_ . "',
                                             db_id = @db_id
                     where proc_name = '$process_name' limit 1;";
 
@@ -52,10 +53,9 @@ $ts_shutdown = time();
 if (intval($ts_boot) == $ts_shutdown) {
     $ts_shutdown++;
 }
-log_bgproc_execution($mydbh,$process_name,intval($ts_boot),$ts_shutdown);
+log_bgproc_execution($mydbh, $process_name, intval($ts_boot), $ts_shutdown);
 
 //////////////////////////////////////////////////////////////////////////////
-
 
 
 echo "Process terminated\n<br>";

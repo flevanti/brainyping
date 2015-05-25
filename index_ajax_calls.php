@@ -12,12 +12,12 @@ function die_json($txt) {
 require_once '../env_config.php';
 require_once '../env_config_' . _MACHINE_ID_ . '.php';
 //SET PHP TIMEZONE
-require_once _INCLUDE_FILES_PATH_ . 'set_timezone.inc.php';
+require_once 'include_files/set_timezone.inc.php';
 //PASSWORD LIB (PHP VER < 5.6 DO NOT HAVE password hash functions... this cover the gap)
-require_once _INCLUDE_FILES_PATH_ . "password_lib.inc.php";
+require_once "include_files/password_lib.inc.php";
 //Autoload classes
 function __autoload($class) {
-    $file_path = _CLASSES_PATH_ . "$class.class.php";
+    $file_path = "classes/$class.class.php";
     if (file_exists($file_path)) {
         require_once "$file_path";
     } else {
@@ -27,7 +27,7 @@ function __autoload($class) {
 }
 
 //GENERIC FUNCTIONS
-require_once _INCLUDE_FILES_PATH_ . "generic_functions.inc.php";
+require_once "include_files/generic_functions.inc.php";
 //URI object to manage URL and retrieve parameters / generate URL
 $uriobj = new URI_manager();
 //Parse URI
@@ -35,7 +35,7 @@ $uriobj->parseURI();
 //FIRST ELEMENT (INDEX KEY = 0) OF THE URI PARAM ARRAY IS THE SCRIPT FILE SO WE DO NOT CONSIDER IT
 //THE SECOND PARAMETER (INDEX KEY = 1) IS THE INITIAL PART OF THE FILE NAME REQUESTED TO HANDLE AJAX CALL...
 //DB CONNECTION TO WEB DB
-//require_once   _INCLUDE_FILES_PATH_ . "db_connect_web.inc.php";
+//require_once   "include_files/db_connect_web.inc.php";
 $mydbh_web = db_connect::connect($db["WEB"]);
 if ($mydbh_web === false) {
     die_json("Unable to connect to the engine database");
@@ -73,7 +73,7 @@ if (array_search($uriobj->getParam(1), $db_connection_pages) !== false) {
     $host_manager = new host_manager($mydbh_web);
 }
 //create filename
-$filename = _AJAX_CALLS_FILES_PATH_ . $uriobj->getParam(1) . ".ajax.php";
+$filename = "ajax_calls/" . $uriobj->getParam(1) . ".ajax.php";
 if (file_exists($filename)) {
     require_once $filename;
 } else {

@@ -52,7 +52,7 @@
         $ ('#modal_subscribe .modal-body').html ('LOADING....');
     });
     $ ('#modal_subscribe').on ('shown.bs.modal', function (e) {
-        $ ('#modal_subscribe .modal-body').load ('<?php echo _AJAX_CALLS_INDEX_;?>subscription_modal_form/' + public_token_subscribe, function () {
+        $ ('#modal_subscribe .modal-body').load ('/index_ajax_calls.php/subscription_modal_form/' + public_token_subscribe, function () {
             $ ('input#email_subscription').focus ();
         });
     });

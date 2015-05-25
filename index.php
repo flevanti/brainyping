@@ -11,7 +11,7 @@ require_once '../env_config_' . _MACHINE_ID_ . '.php';
 require_once 'include_files/set_timezone.inc.php';
 //Autoload classes
 function __autoload($class) {
-    $file_path = _CLASSES_PATH_ . "$class.class.php";
+    $file_path = "classes/$class.class.php";
     if (file_exists($file_path)) {
         require_once "$file_path";
     } else {
@@ -22,9 +22,9 @@ function __autoload($class) {
 //Initialize user session if needed
 user::sessionInitialize();
 //PASSWORD LIB (PHP VER < 5.6 DO NOT HAVE password hash functions... this cover the gap)
-require_once _INCLUDE_FILES_PATH_ . "password_lib.inc.php";
+require_once "include_files/password_lib.inc.php";
 //GENERIC FUNCTIONS
-require_once _INCLUDE_FILES_PATH_ . "generic_functions.inc.php";
+require_once "include_files/generic_functions.inc.php";
 $mydbh_web = db_connect::connect($db["WEB"]);
 if ($mydbh_web === false) {
     die("Unable to connect to the database");
@@ -55,7 +55,7 @@ switch ($uriobj->getParam(0)) {
         break;
     case "ping":
         //$file_to_include[] =  "ping_user_request.inc.php";
-        // require_once    _INCLUDE_FILES_PATH_ . "homepage.inc.php";
+        // require_once   "include_files/homepage.inc.php";
         break;
     case "signin":
         $file_to_include[] = "signin.inc.php";
@@ -178,19 +178,19 @@ echo $page_renderer->bodyContainer();
 //JS variable for ajax calls
 echo "
               <script>
-                  var ajax_calls_home = '" . _AJAX_CALLS_INDEX_ . "';
+                  var ajax_calls_home = '/index_ajax_calls.php/';
               </script>
         ";
 //INCLUDE REQUESTED FILES
 foreach ($file_to_include as $value) {
-    if (file_exists(_INCLUDE_FILES_PATH_ . $value)) {
-        require_once _INCLUDE_FILES_PATH_ . $value;
+    if (file_exists("include_files/$value")) {
+        require_once "include_files/$value";
     } else {
-        require_once _INCLUDE_FILES_PATH_ . "page_not_found.inc.php";
+        require_once "include_files/page_not_found.inc.php";
         break;
     }
 } //END FOREACH
 echo $page_renderer->bodyContainerEnd();
-require_once _INCLUDE_FILES_PATH_ . "footer.inc.php";
+require_once "include_files/footer.inc.php";
 echo $page_renderer->htmlBodyEnd();
 echo $page_renderer->htmlHtmlEnd();

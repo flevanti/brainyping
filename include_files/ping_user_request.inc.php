@@ -9,7 +9,7 @@
 
 <button class="btn btn-sm btn-info btn_another_check" onclick="show_form(this);">CHECK ANOTHER DOMAIN</button>
 <div style="display:none;" id="form_search">
-    <?php require_once _INCLUDE_FILES_PATH_ . "homepage_form_ping.inc.php"; ?>
+    <?php require_once "include_files/homepage_form_ping.inc.php"; ?>
 </div>
 <?php
 
@@ -46,7 +46,7 @@ if ($r === false) {
     echo "<h4>OOOOOPS</h4>";
     echo "Looks like something is wrong!<br>";
     echo t2v($host_searched->last_error) . "<br>";
-    require_once _INCLUDE_FILES_PATH_ . "homepage_form_ping.inc.php";
+    require_once "include_files/homepage_form_ping.inc.php";
 
     return;
 }

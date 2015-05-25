@@ -68,7 +68,7 @@ class check_too_many_requests {
 
     private function stopIt() {
         header("HTTP/1.0 503 Service Unavailable");
-        require_once _ABS_DOC_ROOT_ . '503_too_many_requests.php';
+        require_once $_SESSION["config"]["_ABS_DOC_ROOT_"] . '503_too_many_requests.php';
         exit;
     }
 

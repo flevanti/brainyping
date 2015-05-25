@@ -40,7 +40,7 @@ class email_queue {
         $stmt = $mydbh->prepare($sql);
         $r = $stmt->execute($arr_bind_var);
         if ($r === false) {
-            mail(_APP_DEFAULT_EMAIL_, "FATAL ERROR ON MAIL QUEUE PROCESS", "NEED SUPPORT\n" . implode("\n", $stmt->errorInfo()), "From:" . _APP_DEFAULT_EMAIL_ROBOT_ . "\r\n");
+            mail($_SESSION["config"]["_APP_DEFAULT_EMAIL_"], "FATAL ERROR ON MAIL QUEUE PROCESS", "NEED SUPPORT\n" . implode("\n", $stmt->errorInfo()), "From:" . $_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"] . "\r\n");
 
             return false;
         }

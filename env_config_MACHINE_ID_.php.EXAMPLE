@@ -25,7 +25,7 @@ define("_ABS_LOG_FOLDER_",_ABS_DOC_ROOT_ . "logs/");
 define("_EXT_SCRIPTS_FROM_LOCAL_", true);
 
 //CLI APPS
-define("_ABS_CLI_ROOT_","C:\\xampp\\htdocs\\brainyping.com\\www\\cli\\");         //CONFIG (double slashes \\)
+define("$_SESSION["config"]["_ABS_DOC_ROOT_"]","C:\\xampp\\htdocs\\brainyping.com\\www\\cli\\");         //CONFIG (double slashes \\)
 define("_ABS_PATH_PHP_EXEC_","C:\\xampp\\php\\");                                 //CONFIG (double slashes \\)
 define("_WD_ROWS_LIMIT_",15);
 define("_WD_SECONDS_NEXT_RUN_",5);

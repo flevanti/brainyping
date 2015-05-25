@@ -4,7 +4,7 @@
 $process_name = "PING_TEMP";
 require_once 'cli_common.php';
 //PROCESS NAME
-$process_name = _PING_PROCESS_NAME_;
+$process_name = $_SESSION["config"]["_PING_PROCESS_NAME_"];
 //TS_BOOT is the timestamp of the process, when it has been started.
 $ts_boot = microtime(true);
 //LOG ENABLED

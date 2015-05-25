@@ -6,9 +6,22 @@ session_start();
 //THIS FILE IS NOT USUALLY UPDATED WITH THE PROJECT AND COULD NEED MANUAL UPDATE
 require_once '../env_config.php';
 require_once '../env_config_' . _MACHINE_ID_ . '.php';
-//Config file with common configuration settings
-//Later we will load specific configuration for DEV / PRD environment.
-require_once 'include_files/set_timezone.inc.php';
+//CONNECT TO DB
+unset($_SESSION["config"]);
+$mydbh_web = db_connect::connect($db["WEB"]);
+if ($mydbh_web === false) {
+    die("Unable to connect to the database");
+}
+//LOAD CONFIGURATION FROM DB
+if (!isset($_SESSION["config"]["loaded"])) {
+    $config_manager = new config($mydbh_web);
+    $ret = $config_manager->loadConfig(_MACHINE_ID_);
+    if ($ret !== true) {
+        die ("Error while loading configuration...<br>" . $config_manager->last_error);
+    }
+}
+
+require_once 'include_files/set_timezone.inc.php'; //TIMEZONE SETTINGS
 //Autoload classes
 function __autoload($class) {
     $file_path = "classes/$class.class.php";
@@ -25,10 +38,9 @@ user::sessionInitialize();
 require_once "include_files/password_lib.inc.php";
 //GENERIC FUNCTIONS
 require_once "include_files/generic_functions.inc.php";
-$mydbh_web = db_connect::connect($db["WEB"]);
-if ($mydbh_web === false) {
-    die("Unable to connect to the database");
-}
+/**
+ * Check if the site is under heavy load....
+ */
 $too_many_requests = new check_too_many_requests($mydbh_web);
 $too_many_requests->check(true);
 //URI object to manage URL and retrieve parameters / generate URL
@@ -36,8 +48,8 @@ $uriobj = new URI_manager();
 //Parse URI
 $uriobj->parseURI();
 $page_renderer = new page_renderer(); //Create page renderer option
-$page_renderer->pageTitle = _HTML_TITLE_; //default page title
-$page_renderer->scriptsFromLocal = _EXT_SCRIPTS_FROM_LOCAL_; //load scripts from application or remote CDN source
+$page_renderer->pageTitle = $_SESSION["config"]["_HTML_TITLE_"]; //default page title
+$page_renderer->scriptsFromLocal = $_SESSION["config"]["_EXT_SCRIPTS_FROM_LOCAL_"]; //load scripts from application or remote CDN source
 //SEND HEADER WITH CHARSET - USED ALSO BY PHP
 $page_renderer->sendPageHeader();
 //DEFAULT DB CONNECTION TO ENGINE DISABLED
@@ -146,6 +158,9 @@ switch ($uriobj->getParam(0)) {
         $file_to_include[] = "myprofile.inc.php";
         $conn_engine_db = true;
         break;
+    case "configmanager":
+        $file_to_include[] = "configmanager.inc.php";
+        $conn_engine_db = true;
 } //END SWITCH
 //CONNECT TO ENGINE DB IF NEEDED
 if ($conn_engine_db === true) { //ENGINE CENTRAL DB

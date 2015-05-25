@@ -11,7 +11,7 @@ $log_enabled = false;
 //Select process used for time alignment that are off alignment....
 $sql = "SELECT t.proc_name, (date_ts-date_ts_db) AS sec_diff
               FROM bg_proc_last_exec t
-             WHERE t.check_time_alignment = 1 HAVING ABS(sec_diff) > " . _SEC_ALIGNMENT_ALERT_ . ";";
+             WHERE t.check_time_alignment = 1 HAVING ABS(sec_diff) > " . $_SESSION["config"]["_SEC_ALIGNMENT_ALERT_"] . ";";
 $rs = $mydbh->query($sql);
 if ($rs == false) {
     echo implode("\n", $mydbh->errorInfo());
@@ -39,7 +39,7 @@ if ($records > 0) {
             "It was " . $row["sec_diff"] . " seconds away from main server\n\n" .
             "Minutes alert: " . $row["minutes_alert"] . "\n\n" .
             "Brainyping Team\n\nThis is an automatic mailer please do not reply";
-        $r = email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, $emails, $subject, $message, "");
+        $r = email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $emails, $subject, $message, "");
         if ($r) {
             echo "Email queued\n<br>";
         } else {

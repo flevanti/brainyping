@@ -200,8 +200,8 @@ class user {
         $text .= "Please activate your account clicking on the following link and enter your email and the activation code " . $this->activation_code . "\n\n\n";
         $text .= _APP_ROOT_URL . "/useractivation/" . $this->public_token . "\n\n\n";
         $text .= "Thanks\n";
-        $text .= _APP_NAME_ . " Team\n\n\n\n";
-        $obj = _APP_NAME_ . " Account activation";
+        $text .= $_SESSION["config"]["_APP_NAME_"] . " Team\n\n\n\n";
+        $obj = $_SESSION["config"]["_APP_NAME_"] . " Account activation";
         $this->email_sent = $this->sendEmail($this->email, $obj, $text);
     }
 
@@ -410,7 +410,7 @@ class user {
     }
 
     function sendEmail(&$email, &$obj, &$text) {
-        return email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, $email, $obj, $text, "");
+        return email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $email, $obj, $text, "");
     }
 
     static function logout() {
@@ -561,7 +561,7 @@ class user {
         }
         $message = "Hi, to complete your request please click on the following link:
 
-" . _APP_ROOT_URL_ . "contactactivation/" . $arr_data["validation_token"] . "
+" . $_SESSION["config"]["_APP_ROOT_URL_"] . "contactactivation/" . $arr_data["validation_token"] . "
 
 
 If you cannot click the link please copy it and paste it in the address bar of your browser.
@@ -569,7 +569,7 @@ If you cannot click the link please copy it and paste it in the address bar of y
 
 Thanks
 Brainyping";
-        $res = email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, $arr_data["contact"], "Brainyping - New contact request", $message);
+        $res = email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $arr_data["contact"], "Brainyping - New contact request", $message);
         if ($res === false) {
             $this->last_error = "Unable to send activation mail";
 

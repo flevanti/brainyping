@@ -11,7 +11,7 @@ $log_enabled = false;
 //Create a new aggregate object, delete queued host method is here.... :)
 $r = new host_manager_results();
 if ($r->deleteOldResults() === false) {
-    email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, _APP_DEFAULT_EMAIL_, "DELETE OLD RESULT FAILED", $r->last_error);
+    email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $_SESSION["config"]["_APP_DEFAULT_EMAIL_"], "DELETE OLD RESULT FAILED", $r->last_error);
     $note = "ERROR";
 } else {
     $note = "DELETED RECORDS: " . $r->deleted_records . "\n";

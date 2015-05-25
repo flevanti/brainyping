@@ -145,6 +145,10 @@ class http_header implements monitor_interface {
     }
 
     function getCookiesFolder() {
+        //Check if cookies folder exists otherwise create it
+        if (!is_dir(_ABS_COOKIES_FOLDER_)) {
+            mkdir(_ABS_COOKIES_FOLDER_);
+        }
         return _ABS_COOKIES_FOLDER_;
     }
 

@@ -1,2 +1,2 @@
-/brainyping_cookies/*.txt
-/logs/*.txt
+.idea
+.cli_cookies

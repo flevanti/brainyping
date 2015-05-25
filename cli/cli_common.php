@@ -32,7 +32,7 @@ $mydbh = db_connect::connect($db["ENGINE1_2"]);
 if ($mydbh == false) {
     prnt("FAILED TO CONNECT TO DB!!!!!\n");
     prnt("THAT'S AN IMPORTANT ERROR!!!!!\n");
-    error_log("$process_name  \nUnable to connect to db\n" . date("d/m/Y H:i:s"), 3, _ABS_LOG_FOLDER_ . $process_name . "_" . date("YmdHis") . "_error.txt");
+    mail(_APP_DEFAULT_EMAIL_,'Unable to connect to db', "$process_name  \nUnable to connect to db\n" . date("d/m/Y H:i:s"),"From: " . _APP_DEFAULT_EMAIL_ROBOT_);
     exit();
 }
 prnt("DB connection OK\n");

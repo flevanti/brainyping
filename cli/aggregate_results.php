@@ -10,7 +10,7 @@ $log_enabled = false;
 //Create a new aggregate object, delete queued host method is here.... :)
 $r = new aggregate();
 if ($r->aggregate() === false) {
-    email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, _APP_DEFAULT_EMAIL_, "AGGREGATE RESULT FAILED", $r->last_error);
+    email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $_SESSION["config"]["_APP_DEFAULT_EMAIL_"], "AGGREGATE RESULT FAILED", $r->last_error);
     $note = "ERROR";
 } else {
     $note = "Records found: " . $r->records_found . "\n";
@@ -18,13 +18,13 @@ if ($r->aggregate() === false) {
     $note .= "Max execution time reached: " . ($r->max_time_reached === true ? "True" : "False");
 }
 if ($r->max_time_reached) {
-    email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, _APP_DEFAULT_EMAIL_, "AGGREGATE RESULT TIME LIMIT REACHED", $r->last_error);
+    email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $_SESSION["config"]["_APP_DEFAULT_EMAIL_"], "AGGREGATE RESULT TIME LIMIT REACHED", $r->last_error);
 }
 $sync_flag_id = "RESULTSDAILY";
 $sql = "UPDATE sync_tables_config SET force_run = 1 WHERE friendly_name = 'RESULTSDAILY';";
 $ret = $mydbh->query($sql);
 if ($ret === false) {
-    email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, _APP_DEFAULT_EMAIL_, "AGGREGATE RESULTS DAILY FAILED SYNC FLAG", implode("\n", $mydbh->errorInfo()));
+    email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $_SESSION["config"]["_APP_DEFAULT_EMAIL_"], "AGGREGATE RESULTS DAILY FAILED SYNC FLAG", implode("\n", $mydbh->errorInfo()));
     echo "Unable to activate sync flag $sync_flag_id\n";
 }
 //LOG LAST TIME IT WAS EXECUTED.....

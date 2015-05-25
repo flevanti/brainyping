@@ -11,7 +11,7 @@ $log_enabled = false;
 //Create a new aggregate object, delete queued host method is here.... :)
 $r = new aggregate();
 if ($r->aggregate_latest_24h() === false) {
-    email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, _APP_DEFAULT_EMAIL_, "AGGREGATE RESULTS 24H FAILED", $r->last_error);
+    email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $_SESSION["config"]["_APP_DEFAULT_EMAIL_"], "AGGREGATE RESULTS 24H FAILED", $r->last_error);
     $note = "ERROR:" . $r->last_error;
     echo "ERROR WHILE PROCESSING\n";
     echo $r->last_error . "\n";
@@ -23,7 +23,7 @@ $sync_flag_id = "RESULTS24H";
 $sql = "UPDATE sync_tables_config SET force_run = 1 WHERE friendly_name = 'RESULTS24H';";
 $ret = $mydbh->query($sql);
 if ($ret === false) {
-    email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, _APP_DEFAULT_EMAIL_, "AGGREGATE RESULTS 24H FAILED SYNC FLAG", implode("\n", $mydbh->errorInfo()));
+    email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $_SESSION["config"]["_APP_DEFAULT_EMAIL_"], "AGGREGATE RESULTS 24H FAILED SYNC FLAG", implode("\n", $mydbh->errorInfo()));
     echo "Unable to activate sync flag for $sync_flag_id\n";
 }
 //LOG LAST TIME IT WAS EXECUTED.....

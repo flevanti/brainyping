@@ -58,7 +58,7 @@ if (strlen($_POST["message"]) > 1400) {
 }
 //FORM POST DATA ARE FINE.....
 $_POST["message"] = "MESSAGE FROM " . $_POST["name"] . " - EMAIL " . $_POST["email"] . "\n\n" . $_POST["message"];
-$result = email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, _APP_DEFAULT_EMAIL_CONTACTS_RECIPIENT_, $allowed_subject[$_POST["subject"]], $_POST["message"], "");
+$result = email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $_SESSION["config"]["_APP_DEFAULT_EMAIL_CONTACTS_RECIPIENT_"], $allowed_subject[$_POST["subject"]], $_POST["message"], "");
 if ($result === true) {
     $arr_result["error"] = false;
 } else {

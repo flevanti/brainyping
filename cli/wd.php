@@ -7,7 +7,7 @@ $ts_boot = microtime(true);
 $process_name = "WD_TEMP";
 require_once 'cli_common.php';
 //PROCESS NAME
-$process_name = _WD_PROCESS_NAME_;
+$process_name = $_SESSION["config"]["_WD_PROCESS_NAME_"];
 if (check_proc_enabled($process_name) === false) {
     die("PROCESS DISABLE. CHECK CONFIG");
 }
@@ -88,7 +88,7 @@ $sql = "update hosts set check_reservation_code = '$reservation_code',
                               AND (check_running = 0  or (hosts.check_running = 1
                                                               and check_reservation_ts <= (unix_timestamp() - 120)))
                         ORDER BY next_check_ts
-                               LIMIT " . _WD_ROWS_LIMIT_ . ";";
+                               LIMIT " . $_SESSION["config"]["_WD_ROWS_LIMIT_"] . ";";
 //IN ORDER TO PERFORM THIS OPERATION ON A SINGLE TABLE
 $mydbh->query("set autocommit=0;");
 do {
@@ -107,7 +107,7 @@ do {
         log_it("WatchDog FAILED to reserve hosts to be monitored....", "CRITICAL");
         log_it("Try #" . $transaction_try, "CRITICAL");
         log_it("ERROR: " . implode("\n", $mydbh->errorInfo()), "CRITICAL");
-        //email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_,_APP_DEFAULT_EMAIL_,"WD FAILED","WD FAILED\n\n" . implode("\n",$stmt->errorInfo()));
+        //email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"],$_SESSION["config"]["_APP_DEFAULT_EMAIL_"],"WD FAILED","WD FAILED\n\n" . implode("\n",$stmt->errorInfo()));
         $mydbh->query("unlock tables;");
         //Next please.....
         continue;
@@ -145,7 +145,7 @@ try {
     if ($hosts === false) {
         log_it("WatchDog FAILED to read reserved hosts....", "CRITICAL");
         log_it(implode("\n", $mydbh->errorInfo()), "CRITICAL");
-        email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, _APP_DEFAULT_EMAIL_, "WD FAILED", "WD FAILED\n\n" . implode("\n", $stmt->errorInfo()));
+        email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $_SESSION["config"]["_APP_DEFAULT_EMAIL_"], "WD FAILED", "WD FAILED\n\n" . implode("\n", $stmt->errorInfo()));
         exit;
     }
     $hosts = $hosts->fetchAll(PDO::FETCH_ASSOC);
@@ -154,7 +154,7 @@ try {
     print "Please check log file for details\n\n";
     print "Sending an email ....";
     //EXCEPTION ON DB SO IT'S NOT POSSIBLE TO WRITE ON IT THE LOG...
-    if (mail(_APP_DEFAULT_EMAIL_, "WatchDog Exception", "Finding hosts:\r\n$e", "From:" . _APP_DEFAULT_EMAIL_ROBOT_ . "\r\n")) {
+    if (mail($_SESSION["config"]["_APP_DEFAULT_EMAIL_"], "WatchDog Exception", "Finding hosts:\r\n$e", "From:" . $_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"] . "\r\n")) {
         print "OK\n";
     } else {
         print "FAIL!!\n\n";
@@ -189,14 +189,13 @@ for ($i = 0; $i < $num_hosts; $i++) {
     //I STUMBLED ON IT ONE NIGHT.... :-/
     if ($cmd_param["sil"] == 1) {
         //ADD SILENT PHP INTERPRETER
-        $cmd_string .= _ABS_PATH_PHP_EXEC_ . "php-win.exe ";
+        $cmd_string .= $_SESSION["config"]["_ABS_PATH_PHP_EXEC_"] . "php-win.exe ";
     } else {
         //ADD NORMAL PHP INTERPRETER
-        $cmd_string .= _ABS_PATH_PHP_EXEC_ . "php.exe ";
+        $cmd_string .= $_SESSION["config"]["_ABS_PATH_PHP_EXEC_"] . "php.exe ";
     }
     //ADD PHP SCRIPT TO CALL
-    //BASED ON CHECK TYPE
-    $cmd_string .= "-f \"" . _ABS_CLI_ROOT_ . "ping.php\" ";
+    $cmd_string .= "-f \"" . $_SESSION["config"]["_ABS_CLI_ROOT_"] . "ping.php\" ";
     //ADD HOST ID
     $cmd_string .= $hosts[$i]['id'] . " ";
     //ADD TIMESTAMP - THIS IS USEFUL FOR MONITOR PROCESS EASILY
@@ -221,10 +220,6 @@ for ($i = 0; $i < $num_hosts; $i++) {
 } //END FOR (LOOP HOSTS...)
 log_it("Hosts recordset - loop completed");
 print "\n\n";
-//CALCULATE NEXT TIMESTAMP TO RUN WD
-log_it("Calculate next run time and waiting period");
-$info_about_next["ts_next_run"] = time() + _WD_SECONDS_NEXT_RUN_;
-$info_about_next["date_next_run"] = ts_to_date(time() + _WD_SECONDS_NEXT_RUN_);
 //RESET PING RUNNING IF MORE THAT XX SECONDS
 //REDUNDANT
 //print "RESET PING RUNNING FLAG/CHECK RESERVATION IF STUCK FOR MORE THAT XX SECS.....\n";

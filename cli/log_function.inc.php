@@ -76,7 +76,7 @@ function log_it($log_note, $level = "INFO") {
     $stmt = $mydbh->prepare($sql);
     $t = $stmt->execute($log);
     if ($t === false) {
-        email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, _APP_DEFAULT_EMAIL_, 'LOG ERROR', 'ERROR WHILE LOGGING\n' . implode("\n", $stmt->errorInfo()) . "\n$sql\n\n" . array_to_string($log));
+        email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $_SESSION["config"]["_APP_DEFAULT_EMAIL_"], 'LOG ERROR', 'ERROR WHILE LOGGING\n' . implode("\n", $stmt->errorInfo()) . "\n$sql\n\n" . array_to_string($log));
 
         return false;
     }

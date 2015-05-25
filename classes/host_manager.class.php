@@ -97,7 +97,7 @@ class host_manager {
         while ($row = $rs->fetch(PDO::FETCH_ASSOC)) {
             $res = $this->createHostCheckSchedule($row["id"], $row["minutes"]);
             if ($res === false) {
-                email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, _APP_DEFAULT_EMAIL_CONTACTS_RECIPIENT_, "CHECK SCHEDULE GENERATION", $this->last_error);
+                email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $_SESSION["config"]["_APP_DEFAULT_EMAIL_CONTACTS_RECIPIENT_"], "CHECK SCHEDULE GENERATION", $this->last_error);
 
                 return false;
             }

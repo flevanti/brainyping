@@ -730,7 +730,7 @@ class sync {
         $stmt = $this->dbhandler->prepare($sql);
         if ($stmt === false) {
             $this->verbose_output("LOG STMT PREPARATION ERROR!!!!!");
-            email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, _APP_DEFAULT_EMAIL_,
+            email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $_SESSION["config"]["_APP_DEFAULT_EMAIL_"],
                                     "ERROR LOGGING SYNC EVENT",
                                     "ERROR WHILE PREPARING STATEMENT.......\n\nSQL: $sql\n\nVALUES: " . array_to_string($arr_query) .
                                     "\n\nERROR:" . implode("\n", $stmt->errorInfo()));
@@ -740,7 +740,7 @@ class sync {
         $ret = $stmt->execute($arr_query);
         if ($ret === false) {
             $this->verbose_output("LOG WRITING ERROR!!!!!");
-            email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, _APP_DEFAULT_EMAIL_,
+            email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $_SESSION["config"]["_APP_DEFAULT_EMAIL_"],
                                     "ERROR LOGGING SYNC EVENT",
                                     "ERROR WHILE EXECUTING STATEMENT.......\n\nSQL: $sql\n\nVALUES: " . array_to_string($arr_query) .
                                     "\n\nERROR:" . implode("\n", $stmt->errorInfo()));

@@ -13,7 +13,7 @@ class http_header implements monitor_interface {
     private $resultCode = "NOK";
     private $time_result = 0;
     private $details = array();
-    private $remoteQueryAddress = _REMOTE_PING_URL_;
+    private $remoteQueryAddress;
     public $this_is_a_remote_call = false;
     private $cookie_path = "";
     private $cookie_name = "default_cookie.txt";
@@ -24,6 +24,11 @@ class http_header implements monitor_interface {
     //KEYWORD Look for a keyword in the source
     private $object_mode = array("HEADER" => 1, "KEYWORD" => 0);
     private $keyword = false;
+
+    function __construct() {
+        $this->remoteQueryAddress = $_SESSION["config"]["_REMOTE_PING_URL_"];
+    }
+
 
     //THIS method is used to find a keyword in the page source instead of configuring/calling objects method manually
     function findKeyword($url, $port, $keyword) {
@@ -145,7 +150,11 @@ class http_header implements monitor_interface {
     }
 
     function getCookiesFolder() {
-        return _ABS_COOKIES_FOLDER_;
+        //Check if cookies folder exists otherwise create it
+        if (!is_dir($_SESSION["config"]["_ABS_COOKIES_FOLDER_"])) {
+            mkdir($_SESSION["config"]["_ABS_COOKIES_FOLDER_"]);
+        }
+        return $_SESSION["config"]["_ABS_COOKIES_FOLDER_"];
     }
 
     function headersQuery($url, $port, $get_source = false) {

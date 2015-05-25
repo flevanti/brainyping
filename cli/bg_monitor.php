@@ -37,7 +37,7 @@ while ($row = $rs->fetch(PDO::FETCH_ASSOC)) {
         "Last time run: " . $row["date_str"] . " (" . (time() - $row["date_ts"]) . " seconds ago) \n\n" .
         "Minutes alert: " . $row["minutes_alert"] . "\n\n" .
         "Brainyping Team\n\nThis is an automatic mailer please do not reply";
-    $r = email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, $emails, $subject, $message, "");
+    $r = email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $emails, $subject, $message, "");
     if ($r) {
         echo "Email queued\n<br>";
         $sql = "UPDATE bg_proc_last_exec SET alert_sent = " . time() . " WHERE proc_name = '" . $row["proc_name"] . "';";

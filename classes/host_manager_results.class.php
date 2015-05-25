@@ -225,7 +225,7 @@ class host_manager_results extends host_manager {
         $res = $this->dbhandler->query($sql);
         if ($res === false) {
             $message = "Error during contact retrieving for Host #$id_host\n\n\n";
-            email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, _APP_DEFAULT_EMAIL_, "ERROR RETRIEVING CONTACTS ON MONITOR FAILED", $message);
+            email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], _APP_DEFAULT_EMAIL_, "ERROR RETRIEVING CONTACTS ON MONITOR FAILED", $message);
 
             return false;
         }
@@ -235,7 +235,7 @@ class host_manager_results extends host_manager {
         $message .= "Brainyping Staff";
         while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
             if ($row["contact_type_id"] == "EMAIL") {
-                email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, $row["contact"], $title, $message);
+                email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $row["contact"], $title, $message);
             }
         } //END WHILE
         /*
@@ -261,9 +261,9 @@ class host_manager_results extends host_manager {
         $message .= "If you no longer want to receive this message for this monitor please click the following link:\n";
         while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
             //COMPLETE THE MESSAGE WITH PERSONALISED LINK TO UNSUBSCRIBE
-            $email_message = $message . _APP_ROOT_URL_ . "cancelsubscription/" . $row["validation_token"] . "\n\n";
+            $email_message = $message . $_SESSION["config"]["_APP_ROOT_URL_"] . "cancelsubscription/" . $row["validation_token"] . "\n\n";
             if ($row["id_contact_type"] == "EMAIL") {
-                email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, $row["contact"], $title, $email_message);
+                email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $row["contact"], $title, $email_message);
             }
         } //END WHILE
         return true;
@@ -278,7 +278,7 @@ class host_manager_results extends host_manager {
         $res = $this->dbhandler->query($sql);
         if ($res === false) {
             $message = "Error during contact retrieving for Host #$id_host\n\n\n";
-            email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, _APP_DEFAULT_EMAIL_, "ERROR RETRIEVING CONTACTS ON MONITOR RESTORED", $message);
+            email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $_SESSION["config"]["_APP_DEFAULT_EMAIL_"], "ERROR RETRIEVING CONTACTS ON MONITOR RESTORED", $message);
         }
         $duration = (time() - $check_result_since_ts);
         $title = "BRAINYPING MONITOR RESTORED - $monitor_title";
@@ -288,7 +288,7 @@ class host_manager_results extends host_manager {
         $message .= "Brainyping Staff";
         while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
             if ($row["contact_type_id"] == "EMAIL") {
-                email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, $row["contact"], $title, $message);
+                email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $row["contact"], $title, $message);
             } //end if
         } //END WHILE
         //SUBSCRIBER
@@ -305,9 +305,9 @@ class host_manager_results extends host_manager {
         $message .= "If you no longer want to receive this message for this monitor please click the following link:\n";
         while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
             //COMPLETE THE MESSAGE WITH PERSONALISED LINK TO UNSUBSCRIBE
-            $email_message = $message . _APP_ROOT_URL_ . "cancelsubscription/" . $row["validation_token"] . "\n\n";
+            $email_message = $message . $_SESSION["config"]["_APP_ROOT_URL_"] . "cancelsubscription/" . $row["validation_token"] . "\n\n";
             if ($row["id_contact_type"] == "EMAIL") {
-                email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, $row["contact"], $title, $email_message);
+                email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $row["contact"], $title, $email_message);
             }
         } //END WHILE
         return true;

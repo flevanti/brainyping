@@ -168,7 +168,7 @@ $sql = "insert into host_subscriptions (  id_contact_type,
 //PREPARE THE MAIL MESSAGE
 $email_message = "Hi! We received a request using this email and we want to be sure it's you!\n";
 $email_message .= "If you want to receive an email every time " . strtoupper($host_title) . " goes down that's fine, just click the following link within 7 days\n(or copy it in the address bar of your browser)\n\n";
-$email_message .= _APP_ROOT_URL_ . "confirmsubscription/$validation_token\n\n";
+$email_message .= $_SESSION["config"]["_APP_ROOT_URL_"] . "confirmsubscription/$validation_token\n\n";
 $email_message .= "If this was not you please ignore this email, you do not receive any further email about this.\n\n\n";
 $email_message .= "Thanks\nBrainyping Staff";
 //START TRANSACTION
@@ -180,7 +180,7 @@ if ($ret === false) {
     $arr_result["error_descr"] = "Error during subscription process";
     die(json_encode($arr_result));
 }
-$ret = email_queue::addToQueue(_APP_DEFAULT_EMAIL_ROBOT_, $_POST["email_subscription"], strtoupper($host_title) . " ALERT MONITOR CONFIRM", $email_message);
+$ret = email_queue::addToQueue($_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"], $_POST["email_subscription"], strtoupper($host_title) . " ALERT MONITOR CONFIRM", $email_message);
 if ($ret === false) {
     $arr_result["error_descr"] = "Unable to send confirmation email";
     die(json_encode($arr_result));

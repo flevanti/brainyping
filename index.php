@@ -6,12 +6,25 @@ session_start();
 //THIS FILE IS NOT USUALLY UPDATED WITH THE PROJECT AND COULD NEED MANUAL UPDATE
 require_once '../env_config.php';
 require_once '../env_config_' . _MACHINE_ID_ . '.php';
-//Config file with common configuration settings
-//Later we will load specific configuration for DEV / PRD environment.
-require_once 'include_files/set_timezone.inc.php';
+//CONNECT TO DB
+unset($_SESSION["config"]);
+$mydbh_web = db_connect::connect($db["WEB"]);
+if ($mydbh_web === false) {
+    die("Unable to connect to the database");
+}
+//LOAD CONFIGURATION FROM DB
+if (!isset($_SESSION["config"]["loaded"])) {
+    $config_manager = new config($mydbh_web);
+    $ret = $config_manager->loadConfig(_MACHINE_ID_);
+    if ($ret !== true) {
+        die ("Error while loading configuration...<br>" . $config_manager->last_error);
+    }
+}
+
+require_once 'include_files/set_timezone.inc.php'; //TIMEZONE SETTINGS
 //Autoload classes
 function __autoload($class) {
-    $file_path = _CLASSES_PATH_ . "$class.class.php";
+    $file_path = "classes/$class.class.php";
     if (file_exists($file_path)) {
         require_once "$file_path";
     } else {
@@ -22,13 +35,12 @@ function __autoload($class) {
 //Initialize user session if needed
 user::sessionInitialize();
 //PASSWORD LIB (PHP VER < 5.6 DO NOT HAVE password hash functions... this cover the gap)
-require_once _INCLUDE_FILES_PATH_ . "password_lib.inc.php";
+require_once "include_files/password_lib.inc.php";
 //GENERIC FUNCTIONS
-require_once _INCLUDE_FILES_PATH_ . "generic_functions.inc.php";
-$mydbh_web = db_connect::connect($db["WEB"]);
-if ($mydbh_web === false) {
-    die("Unable to connect to the database");
-}
+require_once "include_files/generic_functions.inc.php";
+/**
+ * Check if the site is under heavy load....
+ */
 $too_many_requests = new check_too_many_requests($mydbh_web);
 $too_many_requests->check(true);
 //URI object to manage URL and retrieve parameters / generate URL
@@ -36,8 +48,8 @@ $uriobj = new URI_manager();
 //Parse URI
 $uriobj->parseURI();
 $page_renderer = new page_renderer(); //Create page renderer option
-$page_renderer->pageTitle = _HTML_TITLE_; //default page title
-$page_renderer->scriptsFromLocal = _EXT_SCRIPTS_FROM_LOCAL_; //load scripts from application or remote CDN source
+$page_renderer->pageTitle = $_SESSION["config"]["_HTML_TITLE_"]; //default page title
+$page_renderer->scriptsFromLocal = $_SESSION["config"]["_EXT_SCRIPTS_FROM_LOCAL_"]; //load scripts from application or remote CDN source
 //SEND HEADER WITH CHARSET - USED ALSO BY PHP
 $page_renderer->sendPageHeader();
 //DEFAULT DB CONNECTION TO ENGINE DISABLED
@@ -55,7 +67,7 @@ switch ($uriobj->getParam(0)) {
         break;
     case "ping":
         //$file_to_include[] =  "ping_user_request.inc.php";
-        // require_once    _INCLUDE_FILES_PATH_ . "homepage.inc.php";
+        // require_once   "include_files/homepage.inc.php";
         break;
     case "signin":
         $file_to_include[] = "signin.inc.php";
@@ -146,10 +158,13 @@ switch ($uriobj->getParam(0)) {
         $file_to_include[] = "myprofile.inc.php";
         $conn_engine_db = true;
         break;
+    case "configmanager":
+        $file_to_include[] = "configmanager.inc.php";
+        $conn_engine_db = true;
 } //END SWITCH
 //CONNECT TO ENGINE DB IF NEEDED
 if ($conn_engine_db === true) { //ENGINE CENTRAL DB
-    $mydbh = db_connect::connect($db["ENGINE1_2"]);
+    $mydbh = db_connect::connect($db["ENGINE"]);
     if ($mydbh === false) {
         die("Unable to connect to the database");
     }
@@ -178,19 +193,19 @@ echo $page_renderer->bodyContainer();
 //JS variable for ajax calls
 echo "
               <script>
-                  var ajax_calls_home = '" . _AJAX_CALLS_INDEX_ . "';
+                  var ajax_calls_home = '/index_ajax_calls.php/';
               </script>
         ";
 //INCLUDE REQUESTED FILES
 foreach ($file_to_include as $value) {
-    if (file_exists(_INCLUDE_FILES_PATH_ . $value)) {
-        require_once _INCLUDE_FILES_PATH_ . $value;
+    if (file_exists("include_files/$value")) {
+        require_once "include_files/$value";
     } else {
-        require_once _INCLUDE_FILES_PATH_ . "page_not_found.inc.php";
+        require_once "include_files/page_not_found.inc.php";
         break;
     }
 } //END FOREACH
 echo $page_renderer->bodyContainerEnd();
-require_once _INCLUDE_FILES_PATH_ . "footer.inc.php";
+require_once "include_files/footer.inc.php";
 echo $page_renderer->htmlBodyEnd();
 echo $page_renderer->htmlHtmlEnd();

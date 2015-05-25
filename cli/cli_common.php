@@ -10,7 +10,6 @@ set_time_limit(600);
 require_once '../../env_config.php';
 require_once '../../env_config_' . _MACHINE_ID_ . '.php';
 echo "MACHINE_ID: " . _MACHINE_ID_ . "\n\n";
-
 //Autoload classes
 function __autoload($class) {
     $file_path = "../classes/$class.class.php";
@@ -27,7 +26,7 @@ $mydbh = db_connect::connect($db["ENGINE"]);
 if ($mydbh == false) {
     prnt("FAILED TO CONNECT TO DB!!!!!\n");
     prnt("THAT'S AN IMPORTANT ERROR!!!!!\n");
-    mail($_SESSION["config"]["_APP_DEFAULT_EMAIL_"],'Unable to connect to db', "$process_name  \nUnable to connect to db\n" . date("d/m/Y H:i:s"),"From: " . $_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"]);
+    mail($_SESSION["config"]["_APP_DEFAULT_EMAIL_"], 'Unable to connect to db', "$process_name  \nUnable to connect to db\n" . date("d/m/Y H:i:s"), "From: " . $_SESSION["config"]["_APP_DEFAULT_EMAIL_ROBOT_"]);
     exit();
 }
 echo "DB connection OK\n";
@@ -42,12 +41,9 @@ if (!isset($_SESSION["config"]["loaded"])) {
 } else {
     echo "session already loaded\n";
 }
-
-
+echo "CONFIG LOADED\n";
 //SET PHP TIMEZONE
 require_once $_SESSION["config"]["_ABS_DOC_ROOT_"] . 'include_files/set_timezone.inc.php';
-
-
 require_once $_SESSION["config"]["_ABS_DOC_ROOT_"] . "include_files/generic_functions.inc.php";
 require_once $_SESSION["config"]["_ABS_CLI_ROOT_"] . 'log_function.inc.php';
 require_once $_SESSION["config"]["_ABS_CLI_ROOT_"] . 'check_proc_enabled.inc.php';

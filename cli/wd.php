@@ -8,6 +8,7 @@ $process_name = "WD_TEMP";
 require_once 'cli_common.php';
 //PROCESS NAME
 $process_name = $_SESSION["config"]["_WD_PROCESS_NAME_"];
+echo "PROCESS NAME DETECTED: " $process_name . "\n";
 if (check_proc_enabled($process_name) === false) {
     die("PROCESS DISABLE. CHECK CONFIG");
 }

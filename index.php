@@ -5,7 +5,6 @@ session_start();
 //CONFIG FILE WITH CONFIGURATION SPECIFIC FOR THIS ENVIRONMENT
 //THIS FILE IS NOT USUALLY UPDATED WITH THE PROJECT AND COULD NEED MANUAL UPDATE
 require_once '../env_config.php';
-require_once '../env_config_' . _MACHINE_ID_ . '.php';
 //CONNECT TO DB
 unset($_SESSION["config"]);
 $mydbh_web = db_connect::connect($db["WEB"]);

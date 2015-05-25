@@ -23,7 +23,7 @@ function __autoload($class) {
 
 echo "Try to connect to DB\n";
 //CONNECTION TO THE DB.....
-$mydbh = db_connect::connect($db["ENGINE1_2"]);
+$mydbh = db_connect::connect($db["ENGINE"]);
 if ($mydbh == false) {
     prnt("FAILED TO CONNECT TO DB!!!!!\n");
     prnt("THAT'S AN IMPORTANT ERROR!!!!!\n");

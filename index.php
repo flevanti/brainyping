@@ -164,7 +164,7 @@ switch ($uriobj->getParam(0)) {
 } //END SWITCH
 //CONNECT TO ENGINE DB IF NEEDED
 if ($conn_engine_db === true) { //ENGINE CENTRAL DB
-    $mydbh = db_connect::connect($db["ENGINE1_2"]);
+    $mydbh = db_connect::connect($db["ENGINE"]);
     if ($mydbh === false) {
         die("Unable to connect to the database");
     }

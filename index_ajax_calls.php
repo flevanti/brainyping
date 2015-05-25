@@ -62,7 +62,7 @@ $db_connection_pages = ["contacts"
     , "edithostattrib"];
 if (array_search($uriobj->getParam(1), $db_connection_pages) !== false) {
     //DB CONNECTION
-    $mydbh = db_connect::connect($db["ENGINE1_2"]);
+    $mydbh = db_connect::connect($db["ENGINE"]);
     if ($mydbh === false) {
         die_json("Unable to connect to the engine database");
     }

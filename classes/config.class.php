@@ -80,7 +80,21 @@ class config {
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) { //Loop every row to save the configuration in session vars
             $_SESSION["config"][$row["var_key"]] = $row["var_value"];
         }
+        //Try to get the root folder for HTML, CLI and COOKIES FOLDER
+        //When calling pages using the web server is ok to use $_SERVER variable...
+        //When dealing with the CLI interface we cannot use $_SERVER so we use the file folder name...
+        if ($_SERVER["DOCUMENT_ROOT"] != "") { //if on web server
+            $_SESSION["config"]["_ABS_DOC_ROOT_"] = str_replace("\\", "/", $_SERVER["DOCUMENT_ROOT"]); //get the web server document root
+        } else { //if on CLI
+            $temp_root = str_replace("\\", "/", dirname(__FILE__)); //get the file path
+            $_SESSION["config"]["_ABS_DOC_ROOT_"] = strstr($temp_root, "/classes", true); //return the initial part of the path without the 'classes' final forlder
+        } //end if
+        if (substr($_SESSION["config"]["_ABS_DOC_ROOT_"], 1) != "/") { //if there's not slash at the end of the path
+            $_SESSION["config"]["_ABS_DOC_ROOT_"] .= "/"; //we add it
+        } //end if
+        $_SESSION["config"]["_ABS_CLI_ROOT_"] = $_SESSION["config"]["_ABS_DOC_ROOT_"] . "cli/"; //CLI folder
+        $_SESSION["config"]["_ABS_COOKIES_FOLDER_"] = $_SESSION["config"]["_ABS_DOC_ROOT_"] . "cli_cookies/"; //cookies folder
         $_SESSION["config"]["loaded"] = true; //set the flag to true, config is now loaded
         return true;
     } //end loadConfig Method
-}
+} //END CLASS

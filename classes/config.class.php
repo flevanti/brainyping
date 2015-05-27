@@ -43,7 +43,7 @@ class config {
                                                     WHERE machine_id = :copyLabel
                                                           AND force_global_value = 0);";
         $stmt = $this->dbhandler->prepare($sql); //prepare SQL statement on MYSQL server
-        $ret = $stmt->execute([":newLabel" => $newLabel, ":copyLabel" => $copyLabel]);
+        $ret = $stmt->execute(array(":newLabel" => $newLabel, ":copyLabel" => $copyLabel));
         if ($ret !== true) {
             $this->last_error = implode(" - ", $stmt->errorInfo());
 
@@ -70,7 +70,7 @@ class config {
                   WHERE machine_id IN ('GLOBAL', :machine_id)
                     ORDER BY var_key, weight;";
         $stmt = $this->dbhandler->prepare($sql); //prepare the statement on MYSQL server
-        $ret = $stmt->execute([":machine_id" => $machine_id]); //execute the statement using the named parameter
+        $ret = $stmt->execute(array(":machine_id" => $machine_id)); //execute the statement using the named parameter
         if ($ret === false) {
             $this->last_error = implode(" - ", $stmt->errorInfo()); //sql execution failed
             return false;

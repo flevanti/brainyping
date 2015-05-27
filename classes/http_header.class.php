@@ -26,9 +26,8 @@ class http_header implements monitor_interface {
     private $keyword = false;
 
     function __construct() {
-        $this->remoteQueryAddress = $_SESSION["config"]["_REMOTE_PING_URL_"];
-    }
 
+    }
 
     //THIS method is used to find a keyword in the page source instead of configuring/calling objects method manually
     function findKeyword($url, $port, $keyword) {
@@ -39,6 +38,9 @@ class http_header implements monitor_interface {
     }
 
     function getHeaders($url, $port = false) {
+        if ($this->this_is_a_remote_call===false) { //if we are NOT in a remote call situation...
+            $this->remoteQueryAddress = $_SESSION["config"]["_REMOTE_PING_URL_"]; //load the remote URL so we are ready to call it if needed
+        }
         $this->cookie_path = $this->getCookiesFolder();
         if (!is_dir($this->cookie_path) or $this->cookie_path == "") {
             $this->resultCode = "NOK";

@@ -80,6 +80,17 @@ class config {
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) { //Loop every row to save the configuration in session vars
             $_SESSION["config"][$row["var_key"]] = $row["var_value"];
         }
+        $this->loadConfigPath();
+
+        return true;
+    } //end loadConfig Method
+
+    /**
+     * Load some configuration related to path using local server variables
+     * No need to store them in the DB
+     * @return bool
+     */
+    function loadConfigPath() {
         //Try to get the root folder for HTML, CLI and COOKIES FOLDER
         //When calling pages using the web server is ok to use $_SERVER variable...
         //When dealing with the CLI interface we cannot use $_SERVER so we use the file folder name...
@@ -96,5 +107,5 @@ class config {
         $_SESSION["config"]["_ABS_COOKIES_FOLDER_"] = $_SESSION["config"]["_ABS_DOC_ROOT_"] . "cli_cookies/"; //cookies folder
         $_SESSION["config"]["loaded"] = true; //set the flag to true, config is now loaded
         return true;
-    } //end loadConfig Method
+    }
 } //END CLASS

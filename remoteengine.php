@@ -1,8 +1,6 @@
 <?php
+header('Content-type: text/html; charset=utf-8');
 error_reporting(E_ALL);
-//phpinfo();
-require_once '../env_config.php';
-require_once '../env_config_' . _MACHINE_ID_ . '.php';
 //Autoload classes
 function __autoload($class) {
     $file_path = "classes/$class.class.php";
@@ -13,6 +11,8 @@ function __autoload($class) {
     }
 }
 
+$config_manager = new config();
+$config_manager->loadConfigPath();
 $r = new http_header();
 if (isset($_GET["ppp"])) {
     $ppp = true;
@@ -75,15 +75,19 @@ if ($r->getHeaderCode() === false) {
     $result["result"] = false;
     $result["last_error"] = $r->last_error;
     $result["last_error_code"] = $r->last_error_code;
-    //var_dump(json_decode(json_encode($result),1));
     die(json_encode($result));
 } else {
-    //var_dump(json_decode(json_encode($r->getHeadersArray()),1));
     $temp = $r->getHeadersArray();
     $result["result"] = true;
     $temp["last_error"] = $r->last_error;
     $temp["last_error_code"] = $r->last_error_code;
-    die(json_encode($temp));
+    //encode array elements to UTF8 to be sure json_encode won't fail...
+    foreach ($temp as $k => &$v) { //note $v as a reference...
+        $v = is_string($v) ? utf8_encode($v) : $v; //if $v is a string encode to utf8
+    }
+    $jsonstring = json_encode($temp);
+    echo $jsonstring;
+    exit;
 }
 
 

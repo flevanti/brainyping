@@ -1,4 +1,10 @@
 <?php
+/**
+ * FILE DEPENDENCIES:
+ *  classes/config.class.php
+ *  classes/http_header.class.php
+
+ */
 header('Content-type: text/html; charset=utf-8');
 error_reporting(E_ALL);
 //Autoload classes

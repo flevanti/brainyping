@@ -14,7 +14,7 @@ class hp_tile {
         $script .= "<div class=\"container_host_hp_interno\" host=\"" . $host . "\" host_public_token = \"" . $public_token . "\" onClick=\"host_info(this)\">";
         $script .= "<h3>";
         $script .= "<img src='https://www.google.com/s2/favicons?domain=" . $host . "' alt='' class='favico' /> ";
-        $script .= "<a href=\"/info/" . $public_token . "/" . $title_in_link . "/\" title=\"Chechk ".  $title ." server status\" alt=\"Chechk ".  $title ." server status\">" . t2v($title) . "</a>";
+        $script .= "<a href=\"/info/" . $public_token . "/" . $title_in_link . "/\" title=\"Check ".  $title ." server status\" alt=\"Check ".  $title ." server status\">" . t2v($title) . "</a>";
         $script .= "</h3>";
         $script .= "<p class='last_time_checked'>";
         $script .= "<span class =\"fa " . $check_icon . "\" title=\"" . $check_descr . "\"></span> ";

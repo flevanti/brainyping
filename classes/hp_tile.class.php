@@ -9,12 +9,13 @@ class hp_tile {
 
     static function get_script($host, $public_token, $title, $check_icon, $check_descr, $check_started_ts, $last_check_avg, $check_result, $latest_results) {
         $title_in_link = urlencode(str_replace(" ", "-", $title));
+        $title_original = $title;
         $title = (strlen($title) > 20 ? substr($title, 0, 18) . ".." : $title);
         $script = "";
         $script .= "<div class=\"container_host_hp_interno\" host=\"" . $host . "\" host_public_token = \"" . $public_token . "\" onClick=\"host_info(this)\">";
         $script .= "<h3>";
         $script .= "<img src='https://www.google.com/s2/favicons?domain=" . $host . "' alt='' class='favico' /> ";
-        $script .= "<a href=\"/info/" . $public_token . "/" . $title_in_link . "/\" title=\"Check ".  $title ." server status\" alt=\"Check ".  $title ." server status\">" . t2v($title) . "</a>";
+        $script .= "<a href=\"/info/" . $public_token . "/" . $title_in_link . "/\" title=\"Check ".  $title_original ." server status\" alt=\"Check ".  $title_original ." server status\">" . t2v($title) . "</a>";
         $script .= "</h3>";
         $script .= "<p class='last_time_checked'>";
         $script .= "<span class =\"fa " . $check_icon . "\" title=\"" . $check_descr . "\"></span> ";

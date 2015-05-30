@@ -76,6 +76,7 @@ if ($ppp === false) {
 set_time_limit(600);
 $result = array();
 $r->this_is_a_remote_call = true;
+$r->setCookiesFolder($_SESSION["config"]["_ABS_COOKIES_FOLDER_"]);
 $r->getHeaders($url, $port);
 if ($r->getHeaderCode() === false) {
     $result["result"] = false;

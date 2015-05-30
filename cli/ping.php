@@ -145,6 +145,8 @@ if ($host["check_type"] == "CHECKCONN") {
 //HTTP HEADER
 if ($host["check_type"] == "HTTPHEADER") {
     $monitor = new http_header();
+    $monitor->setRemoteQueryAddress($_SESSION["config"]["_REMOTE_PING_URL_"]);
+    $monitor->setCookiesFolder($_SESSION["config"]["_ABS_COOKIES_FOLDER_"]);
     $monitor->getHeaders($host["host"], $host["port"]);
 } //END HTTP HEADER
 //FTP CHECK
@@ -168,6 +170,8 @@ if ($host["check_type"] == "SMTPCONN") {
 //CALL THE NORMAL FUNCTION
 if ($host["check_type"] == "WEBKEYWORD") {
     $monitor = new http_header();
+    $monitor->setRemoteQueryAddress($_SESSION["config"]["_REMOTE_PING_URL_"]);
+    $monitor->setCookiesFolder($_SESSION["config"]["_ABS_COOKIES_FOLDER_"]);
     $monitor->findKeyword($host["host"], $host["port"], $host["keyword"]);
 }
 prnt("Monitor ended, checking results\n");

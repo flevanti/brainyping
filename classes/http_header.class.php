@@ -13,9 +13,9 @@ class http_header implements monitor_interface {
     private $resultCode = "NOK";
     private $time_result = 0;
     private $details = array();
-    private $remoteQueryAddress;
+    private $remoteQueryAddress = false;
     public $this_is_a_remote_call = false;
-    private $cookie_path = "";
+    private $cookie_path = "default_cookies_folder";
     private $cookie_name = "default_cookie.txt";
     private $headers_from_remote = false;
 
@@ -26,7 +26,10 @@ class http_header implements monitor_interface {
     private $keyword = false;
 
     function __construct() {
+    }
 
+    function setRemoteQueryAddress($url) {
+        $this->remoteQueryAddress = $url;
     }
 
     //THIS method is used to find a keyword in the page source instead of configuring/calling objects method manually
@@ -38,10 +41,6 @@ class http_header implements monitor_interface {
     }
 
     function getHeaders($url, $port = false) {
-        if ($this->this_is_a_remote_call===false) { //if we are NOT in a remote call situation...
-            $this->remoteQueryAddress = $_SESSION["config"]["_REMOTE_PING_URL_"]; //load the remote URL so we are ready to call it if needed
-        }
-        $this->cookie_path = $this->getCookiesFolder();
         if (!is_dir($this->cookie_path) or $this->cookie_path == "") {
             $this->resultCode = "NOK";
             $this->last_error = "Cookies path does not exist! (" . $this->cookie_path . ")";
@@ -142,7 +141,7 @@ class http_header implements monitor_interface {
         while ($this->resultCode != "OK"
             and (
                 ($this->requests < 3 and $this->this_is_a_remote_call === false)
-                or ($this->requests < 2 and $this->this_is_a_remote_call === true))
+                or ($this->requests < 2 and $this->this_is_a_remote_call === true and $this->remoteQueryAddress !== false))
         ) { //START THE WHILE....
             $this->requests++;
             $this->getHeaders($url, $port);
@@ -151,12 +150,11 @@ class http_header implements monitor_interface {
         return true;
     }
 
-    function getCookiesFolder() {
-        //Check if cookies folder exists otherwise create it
-        if (!is_dir($_SESSION["config"]["_ABS_COOKIES_FOLDER_"])) {
-            mkdir($_SESSION["config"]["_ABS_COOKIES_FOLDER_"]);
+    function setCookiesFolder($folder) {
+        if (!is_dir($folder)) {
+            mkdir($folder);
         }
-        return $_SESSION["config"]["_ABS_COOKIES_FOLDER_"];
+        $this->cookie_path = $folder;
     }
 
     function headersQuery($url, $port, $get_source = false) {

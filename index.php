@@ -64,10 +64,6 @@ switch ($uriobj->getParam(0)) {
     case "changelog":
         $file_to_include[] = "changelog.inc.php";
         break;
-    case "ping":
-        //$file_to_include[] =  "ping_user_request.inc.php";
-        // require_once   "include_files/homepage.inc.php";
-        break;
     case "signin":
         $file_to_include[] = "signin.inc.php";
         break;

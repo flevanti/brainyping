@@ -1,7 +1,7 @@
 <?php
 
 class sync {
-    private $dbhandler;
+    private $dbhandler; //default connection to query DB for tasks it is also the 'int' connection
     public $last_error = "";
     public $last_error_tech = "";
     private $nrec = 0;
@@ -14,14 +14,12 @@ class sync {
     public $verbose_newline = "\n";
     public $time_spent = 0;
 
-    function __construct(&$dbconn = false) {
-        if ($dbconn == false) {
-            global $mydbh;
-            $this->dbhandler = $mydbh;
-        } else {
-            $this->dbhandler = $dbconn;
-        }
-        $this->dbhandler_int = $this->dbhandler;
+    function __construct(&$dbconn_1, &$dbconn_2) {
+
+        $this->dbhandler = $dbconn_1;
+
+        $this->dbhandler_int = $dbconn_1;
+        $this->dbhandler_ext = $dbconn_2;
     }
 
     private function verbose_output($txt) {
@@ -146,16 +144,6 @@ class sync {
     private function insertExternal($row_sync) {
         $this->verbose_output("INSERT EXTERNAL");
         $step = "INSERT_EXTERNAL";
-        //FIRST OF ALL WE TRY TO CONNECT TO THE EXTERNAL DB
-        $ret = $this->connectExternalDB($row_sync);
-        if ($ret === false) {
-            $this->last_error = "Unable to connect to remote DB";
-            $this->verbose_output($this->last_error);
-            $this->writeLog($row_sync, $step, 0, "ERROR", $this->last_error . "\n" . $this->last_error_tech);
-
-            return false;
-        }
-        //CONNECTION OK....
         //DEFINE FROM WHERE TO WHERE .... :)
         if ($row_sync["sync_reverse"] == 0) {
             $source_table = $row_sync["int_table"];
@@ -225,17 +213,7 @@ class sync {
     private function insertLocal($row_sync) {
         $this->verbose_output("INSERT LOCAL");
         $step = "INSERT_LOCAL";
-        //FIRST OF ALL WE TRY TO CONNECT TO THE EXTERNAL DB
-        //$ret = $this->connectExternalDB($row_sync);
-        /*if ($ret === false) {
-            $this->last_error = "Unable to connect to remote DB";
-            $this->verbose_output($this->last_error);
-            $this->writeLog($row_sync,$step,0,"ERROR",$this->last_error . "\n" . $this->last_error_tech);
-            return false;
-        }
 
-        //CONNECTION OK....
-        */
         //DEFINE FROM WHERE TO WHERE .... :)
         if ($row_sync["sync_reverse"] == 0) {
             $source_table = $row_sync["int_table"];
@@ -294,8 +272,9 @@ class sync {
 
         return $sql_string;
     }
-
+    /**
     private function connectExternalDB($row_sync) {
+        return;
         try {
             $options = array(
                 PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . $row_sync["ext_charset"] . ';',
@@ -317,20 +296,11 @@ class sync {
         } //END OF TRY/CATCH
         return true;
     }
-
+*/
     private function updateExternal($row_sync) {
         $this->verbose_output("UPDATE EXTERNAL");
         $step = "UPDATE_EXTERNAL";
-        //FIRST OF ALL WE TRY TO CONNECT TO THE EXTERNAL DB
-        $ret = $this->connectExternalDB($row_sync);
-        if ($ret === false) {
-            $this->last_error = "Unable to connect to remote DB";
-            $this->verbose_output($this->last_error);
-            $this->writeLog($row_sync, $step, 0, "ERROR", $this->last_error . "\n" . $this->last_error_tech);
 
-            return false;
-        }
-        //CONNECTION OK....
         //DEFINE FROM WHERE TO WHERE .... :)
         if ($row_sync["sync_reverse"] == 0) {
             $source_table = $row_sync["int_table"];
@@ -367,7 +337,7 @@ class sync {
 
             return false;
         }
-        if ($row_sync["update_cursor_value_included"] == 1) {
+        if ($row_sync["update_cursor_value_included"] == 1 and $cursor_value > 0) {
             $cursor_value--;
             $this->verbose_output("CURSOR VALUE SHOULD BE INCLUDED");
             $this->verbose_output("NEW CURSOR VALUE: " . $cursor_value);
@@ -429,16 +399,6 @@ class sync {
     private function deleteByLookupExternal($row_sync) {
         $this->verbose_output("DELETE BY LOOKUP EXTERNAL");
         $step = "DELETE_BYLOOKUP_EXTERNAL";
-        //FIRST OF ALL WE TRY TO CONNECT TO THE EXTERNAL DB
-        $ret = $this->connectExternalDB($row_sync);
-        if ($ret === false) {
-            $this->last_error = "Unable to connect to remote DB";
-            $this->verbose_output($this->last_error);
-            $this->writeLog($row_sync, $step, 0, "ERROR", $this->last_error . "\n" . $this->last_error_tech);
-
-            return false;
-        }
-        //CONNECTION OK....
         //DEFINE FROM WHERE TO WHERE .... :)
         if ($row_sync["sync_reverse"] == 0) {
             $source_table = $row_sync["int_table"];
@@ -492,16 +452,6 @@ class sync {
     private function deleteByCursorLocal($row_sync) {
         $this->verbose_output("DELETE BY CURSOR LOCAL");
         $step = "DELETE_BYCURSOR_LOCAL";
-        //FIRST OF ALL WE TRY TO CONNECT TO THE EXTERNAL DB
-        //$ret = $this->connectExternalDB($row_sync);
-        /*
-        if ($ret === false) {
-            $this->last_error = "Unable to connect to remote DB";
-            $this->writeLog($row_sync,$step,0,"ERROR",$this->last_error . "\n" . $this->last_error_tech);
-            return false;
-        }
-        */
-        //CONNECTION OK....
         //DEFINE FROM WHERE TO WHERE .... :)
         if ($row_sync["sync_reverse"] == 0) {
             $source_table = $row_sync["int_table"];
@@ -556,15 +506,6 @@ class sync {
     private function deleteByCursorExternal($row_sync) {
         $this->verbose_output("DELETE BY CURSO EXTERNAL");
         $step = "DELETE_BYCURSOR_EXTERNAL";
-        //FIRST OF ALL WE TRY TO CONNECT TO THE EXTERNAL DB
-        $ret = $this->connectExternalDB($row_sync);
-        if ($ret === false) {
-            $this->last_error = "Unable to connect to remote DB";
-            $this->writeLog($row_sync, $step, 0, "ERROR", $this->last_error . "\n" . $this->last_error_tech);
-
-            return false;
-        }
-        //CONNECTION OK....
         //DEFINE FROM WHERE TO WHERE .... :)
         if ($row_sync["sync_reverse"] == 0) {
             $source_table = $row_sync["int_table"];

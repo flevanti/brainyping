@@ -13,9 +13,20 @@ if (isset($argv[1])) {
 } else {
     $profile = false;
 }
+
+//Create the connection to the web db (destination)
+echo "Connection to WEB DB....";
+$mydbh_web = db_connect::connect($db["WEB"]);
+if ($mydbh_web === false) {
+    die("Unable to connect to the database");
+}
+echo "OK!\n\n";
+
+
 //Create a new sync object and give it the "SOURCE/INSIDE" connection
 //Every sync profile has its own DB "DESTINATION/EXTERNAL" settings or LOCAL DB flag.
-$sync = new sync($mydbh);
+$sync = new sync($mydbh, $mydbh_web);
+
 $ret = $sync->setSyncRunning($process_name);
 if ($ret === false) {
     echo "Unable to proceed!\n";

@@ -133,10 +133,6 @@ switch ($uriobj->getParam(0)) {
         $file_to_include[] = "contactactivation.inc.php";
         $conn_engine_db = true;
         break;
-    case "temp":
-        $file_to_include[] = "temp.inc.php";
-        $conn_engine_db = true;
-        break;
     case "confirmsubscription":
         $file_to_include[] = "confirm_subscription.inc.php";
         $conn_engine_db = true;

@@ -21,9 +21,7 @@ function array_to_string($array, $indent = "") {
     } else {
         return $array;
     }
-}
-
-//END OF FUNCTION ARRAY TO STRING
+}//END OF FUNCTION ARRAY TO STRING
 function calculate_time($seconds_interval, $return_type = "ARRAY") {
     $seconds["y"] = 31556926;
     $seconds["m"] = 2629743;

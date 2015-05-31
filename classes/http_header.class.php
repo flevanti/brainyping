@@ -1,38 +1,54 @@
 <?php
 
+/**
+ * Class http_header
+ * This class is used to get a web page http code status or find a keyword in its sourcecode
+ * it can be used calling the methods getHeaders() or findKeyword()
+ * we may want to configure a cookie path and a remote engine using setCookiesFolder() and setRemoteQueryAddress()
+ * It performs 3 tries with different configuration:
+ * 1 - try to retrieve the URL without source code (if we are looking for a keyword source code is retrieved)
+ * 2 - try to retrieve the URL with souce code
+ * 3 - try to use an external call to a remote url (if configured) and perform the 2 above checks again from another
+ * server. The remote call returns a json string with all the information about the result.
+ */
 class http_header implements monitor_interface {
-    private $url = false;
-    private $url_port = false;
-    private $headers = false;
-    private $time_spent = false;
-    private $timeout = 10;
-    public $last_error = "";
-    public $last_error_code = "-";
-    private $requests = 1;
-    private $success = 0;
-    private $resultCode = "NOK";
-    private $time_result = 0;
-    private $details = array();
-    private $remoteQueryAddress = false;
-    public $this_is_a_remote_call = false;
-    private $cookie_path = "default_cookies_folder";
-    private $cookie_name = "default_cookie.txt";
-    private $headers_from_remote = false;
-
-    //Set the flag for the mode
-    //HEADER Look for a 200 header code
-    //KEYWORD Look for a keyword in the source
-    private $object_mode = array("HEADER" => 1, "KEYWORD" => 0);
-    private $keyword = false;
+    private $url = false; //url to check
+    private $url_port = false; //port to check
+    private $headers = false; //This will be an array with the heades information
+    private $time_spent = false; //Time spent for a try
+    private $timeout = 10; //CURL socket timeout
+    public $last_error = ""; //last error occurred
+    public $last_error_code = "-"; //last error occured (code format to be able to trace or log if necessary)
+    private $requests = 1; //requests sequential. We start from n.1
+    private $success = 0; //how many successful requests we had (this was more useful when ping was used)
+    private $resultCode = "NOK"; //NOK = not OK, OK = successful (200 http code or keyword found in source code)
+    private $time_result = 0; //Time spent to get the result
+    private $details = array(); //Array with many information about the request
+    private $remoteQueryAddress = false; //if a remote engine is configure we can put here the URL
+    public $this_is_a_remote_call = false; //flag to enable remote call to perform additional tries from an external server
+    private $cookie_path = "default_cookies_folder"; //default cookies path used to store cookie info during CURL calls
+    private $cookie_name = "default_cookie.txt"; //default cookie name, this need to be updated with unique info because system could perform hundreds of calls in few seconds.
+    private $object_mode = array("HEADER" => 1, "KEYWORD" => 0); //set the mode of the class: HEADER Look for a 200 header code  KEYWORD Look for a keyword in the source
+    private $keyword = false; //keyword to look for
 
     function __construct() {
     }
 
+    /**
+     * @param $url string containing the url used to perform the remote call
+     */
     function setRemoteQueryAddress($url) {
         $this->remoteQueryAddress = $url;
     }
 
-    //THIS method is used to find a keyword in the page source instead of configuring/calling objects method manually
+    /**
+     * This method is used to find a keyword in the page source
+     * This is just a shortcut instead of configuring properties and calling methods method manually
+     * @param $url     string containing the url to check
+     * @param $port    number of the port for connection
+     * @param $keyword keyword to look for
+     * @return bool
+     */
     function findKeyword($url, $port, $keyword) {
         $this->setObjectMode("KEYWORD");
         $this->keyword = $keyword;
@@ -40,6 +56,11 @@ class http_header implements monitor_interface {
         return $this->getHeaders($url, $port);
     }
 
+    /**
+     * @param      $url  string containing the url to retrieve
+     * @param bool $port number of the port used for the connection
+     * @return bool
+     */
     function getHeaders($url, $port = false) {
         if (!is_dir($this->cookie_path) or $this->cookie_path == "") {
             $this->resultCode = "NOK";
@@ -70,19 +91,16 @@ class http_header implements monitor_interface {
                 $get_source = ($this->object_mode["KEYWORD"] == 1 ? true : false);
                 //first run... default way... ONLY HEADERS (ALSO SOURCE IF KEYWORD MODE)
                 $this->headers = $this->headersQuery($this->url, $this->url_port, $get_source);
-                $this->headers_from_remote = false;
                 break;
             case 2:
                 //second run...... ... let's wait a little bit... AND THEN HEADERS AND BODY
                 sleep(2);
                 $this->headers = $this->headersQuery($this->url, $this->url_port, true);
-                $this->headers_from_remote = false;
                 break;
             case 3:
                 //third run... remote way (query another server to perform the same operation and retrieve results)
                 //Headers from remote also contains the last error / last error code
                 $this->headers = $this->headersQueryRemote($this->url, $this->url_port);
-                $this->headers_from_remote = true;
                 break;
         }
         $this->time_spent = round((microtime(true) - $time_spent) * 1000, 2);
@@ -150,6 +168,11 @@ class http_header implements monitor_interface {
         return true;
     }
 
+    /**
+     * This method save in a local property the folder used to store cookie during the curl calls.
+     * If the folder does not exist, it create it.
+     * @param $folder folder used to store cookies
+     */
     function setCookiesFolder($folder) {
         if (!is_dir($folder)) {
             mkdir($folder);
@@ -157,6 +180,13 @@ class http_header implements monitor_interface {
         $this->cookie_path = $folder;
     }
 
+    /**
+     * This is the method that actually perform the call.
+     * @param      $url        url string to query
+     * @param      $port       port number for the connection
+     * @param bool $get_source flag used to retrieve the source code during the curl call or not.
+     * @return bool|mixed return false of failure, an array containing all the information if successful
+     */
     function headersQuery($url, $port, $get_source = false) {
         $ch = curl_init(); // create cURL handle (ch)
         if (!$ch) {
@@ -227,10 +257,19 @@ class http_header implements monitor_interface {
         return $this->headers;
     } //END METHOD
 
+    /**
+     * This method is used to retrieve page information using a remote call to an external page
+     * url and port will be send as GET information, the remote page will perform the same exact checks
+     * and will return result codes/information.
+     * The remote page uses the same class (this)
+     * @param $url  url to retrieve
+     * @param $port port used for the connection
+     * @return array|bool false on failure, an array with all the information retrieved if successfull
+     */
     function headersQueryRemote($url, $port) {
-        $code = $this->generateCheckCode($url);
+        $code = $this->generateCheckCode($url); //code used to verify that the request is coming from us.
         $url = rawurlencode($url);
-        $url_to_query = $this->remoteQueryAddress . "?url=$url&port=$port&code=$code&ppp";
+        $url_to_query = $this->remoteQueryAddress . "?url=$url&port=$port&code=$code&ppp"; //ppp means Passe-Partout, is a code used to skip remote checks.
         $curl_handle = curl_init();
         curl_setopt($curl_handle, CURLOPT_URL, $url_to_query);
         curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, 4);
@@ -284,7 +323,14 @@ class http_header implements monitor_interface {
         }
     } //END METHOD
 
+    /**
+     * @param $url the url to retrieve
+     * @return string used as a code to verify that the remote call is made by us.
+     */
     function generateCheckCode($url) {
+        //YOU MAY WANT TO CREATE A MORE SPECIFIC FORMULA TO CREATE A CHECKCODE
+        //EVEN IF THE CODE IS LESS IMPORTANT THAT KEEPING THE REMOTE URL AS SECRET AS POSSIBLE
+        //OR CONFIGURE IP ADDRESSES IN THE REMORE FILE.
         $len = strlen($url);
         $len *= 3.5;
         $len = md5($len);
@@ -292,10 +338,17 @@ class http_header implements monitor_interface {
         return $len;
     }
 
+    /**
+     * Used to query headers to know how many redirects we had during the curl call
+     * @return number
+     */
     function getRedirectionsNumber() {
         return $this->headers["redirect_count"];
     }
 
+    /**
+     * @return mixed The full detail of the call
+     */
     function getArrayElements() {
         return $this->headers["array_elements"];
     }

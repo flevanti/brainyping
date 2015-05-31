@@ -3,6 +3,7 @@
  * FILE DEPENDENCIES:
  *  classes/config.class.php
  *  classes/http_header.class.php
+ *  classes/multi_implode.class.php
 
  */
 header('Content-type: text/html; charset=utf-8');

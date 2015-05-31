@@ -267,9 +267,8 @@ class http_header implements monitor_interface {
      * @return array|bool false on failure, an array with all the information retrieved if successfull
      */
     function headersQueryRemote($url, $port) {
-        $code = $this->generateCheckCode($url); //code used to verify that the request is coming from us.
         $url = rawurlencode($url);
-        $url_to_query = $this->remoteQueryAddress . "?url=$url&port=$port&code=$code&ppp"; //ppp means Passe-Partout, is a code used to skip remote checks.
+        $url_to_query = $this->remoteQueryAddress . "?url=$url&port=$port";
         $curl_handle = curl_init();
         curl_setopt($curl_handle, CURLOPT_URL, $url_to_query);
         curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, 4);
@@ -322,21 +321,6 @@ class http_header implements monitor_interface {
             return false;
         }
     } //END METHOD
-
-    /**
-     * @param $url the url to retrieve
-     * @return string used as a code to verify that the remote call is made by us.
-     */
-    function generateCheckCode($url) {
-        //YOU MAY WANT TO CREATE A MORE SPECIFIC FORMULA TO CREATE A CHECKCODE
-        //EVEN IF THE CODE IS LESS IMPORTANT THAT KEEPING THE REMOTE URL AS SECRET AS POSSIBLE
-        //OR CONFIGURE IP ADDRESSES IN THE REMORE FILE.
-        $len = strlen($url);
-        $len *= 3.5;
-        $len = md5($len);
-
-        return $len;
-    }
 
     /**
      * Used to query headers to know how many redirects we had during the curl call

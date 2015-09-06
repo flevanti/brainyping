@@ -7,7 +7,7 @@ session_start();
 set_time_limit(600);
 //CONFIG FILE WITH CONFIGURATION SPECIFIC FOR THIS ENVIRONMENT
 //THIS FILE IS NOT USUALLY UPDATED WITH THE PROJECT AND COULD NEED MANUAL UPDATE
-require_once '../../env_config.php';
+require_once '../env_config.php';
 echo "MACHINE_ID: " . _MACHINE_ID_ . "\n\n";
 //Autoload classes
 function __autoload($class) {

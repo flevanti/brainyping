@@ -9,7 +9,7 @@ function die_json($txt) {
 
 //CONFIG FILE WITH CONFIGURATION SPECIFIC FOR THIS ENVIRONMENT
 //THIS FILE IS NOT USUALLY UPDATED WITH THE PROJECT AND COULD NEED MANUAL UPDATE
-require_once '../env_config.php';
+require_once 'env_config.php';
 $mydbh_web = db_connect::connect($db["WEB"]);
 if ($mydbh_web === false) {
     die_json("Unable to connect to the engine database");

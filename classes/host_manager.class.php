@@ -17,6 +17,10 @@ class host_manager {
         }
     }
 
+    function __destruct() {
+        $this->dbhandler = null;
+    }
+
     function validHostOrIP($host) {
         if (filter_var(gethostbyname($host), FILTER_VALIDATE_IP) !== false) {
             return true;
